@@ -16,7 +16,7 @@ object TodoItemsRepository {
             id = "2",
             text = "Second todo",
             deadline = LocalDate.of(2001, 8, 22),
-            importance = TodoItemImportance.MEDIUM,
+            importance = TodoItemImportance.LOW,
             created = LocalDate.of(2001, 8, 20)
         ),
         TodoItem(
@@ -30,6 +30,7 @@ object TodoItemsRepository {
         TodoItem(
             id = "4",
             text = "Fourth todo",
+            importance = TodoItemImportance.HIGH,
             created = LocalDate.of(2071, 8, 20)
         )
     )
