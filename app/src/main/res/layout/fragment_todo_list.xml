@@ -1,7 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="4dp">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapsingToolbarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="4dp"
+            app:collapsedTitleTextAppearance="@style/Title"
+            app:collapsedTitleTextColor="@color/label_primary"
+            app:contentScrim="@color/back_secondary"
+            app:expandedTitleMarginBottom="44dp"
+            app:expandedTitleMarginStart="60dp"
+            app:expandedTitleTextAppearance="@style/LargeTitle"
+            app:expandedTitleTextColor="@color/label_primary"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+            app:title="@string/MyTodo"
+            app:titleCollapseMode="scale">
+
+            <TextView
+                android:id="@+id/textViewDoneCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:paddingStart="60dp"
+                android:paddingTop="102dp"
+                android:paddingBottom="18dp"
+                tools:text="Выполнено — 5"
+                android:textAppearance="@style/Body"
+                android:textColor="@color/label_tertiary"
+                app:layout_collapseMode="parallax" />
+
+            <!-- <ImageView
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_gravity="end|bottom"
+                 android:layout_marginEnd="24dp"
+                 android:layout_marginBottom="16dp"
+                 android:src="@drawable/ic_visibility"
+                 app:layout_collapseMode="pin"
+                 app:tint="@color/blue" />-->
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:background="@android:color/transparent"
+                app:layout_collapseMode="pin"
+                app:menu="@menu/menu_todo"
+                app:titleTextAppearance="@style/Title"
+                app:titleTextColor="@color/white" />
+
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -10,6 +73,19 @@
         android:layout_marginHorizontal="8dp"
         android:background="@drawable/bg_8dp"
         android:paddingVertical="8dp"
-        />
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
 
-</LinearLayout>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
+        android:contentDescription="@null"
+        android:layout_marginBottom="40dp"
+        android:backgroundTint="@color/blue"
+        app:tint="@color/white"
+        android:elevation="6dp"
+        app:borderWidth="0dp"
+        android:src="@drawable/ic_add"
+        app:shapeAppearanceOverlay="@style/FAB" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -6,4 +6,33 @@
         <item name="buttonIcon">@drawable/selector_checkbox</item>
     </style>
 
+    <style name="LargeTitle" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">32sp</item>
+        <item name="lineHeight">38sp</item>
+    </style>
+
+    <style name="Title" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">20sp</item>
+        <item name="lineHeight">32sp</item>
+    </style>
+
+    <style name="Button" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">14sp</item>
+        <item name="lineHeight">24sp</item>
+    </style>
+
+    <style name="Body" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">16sp</item>
+        <item name="lineHeight">20sp</item>
+    </style>
+
+    <style name="Subhead" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">14sp</item>
+        <item name="lineHeight">20sp</item>
+    </style>
+
+    <style name="FAB" parent="ShapeAppearanceOverlay.Material3.FloatingActionButton">
+        <item name="cornerSize">100%</item>
+    </style>
+
 </resources>
