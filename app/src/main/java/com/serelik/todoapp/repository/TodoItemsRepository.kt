@@ -4,7 +4,7 @@ import com.serelik.todoapp.model.TodoItem
 import com.serelik.todoapp.model.TodoItemImportance
 import java.time.LocalDate
 
-class TodoItemsRepository {
+object TodoItemsRepository {
 
     fun getItems() = listOf(
         TodoItem(
@@ -21,10 +21,10 @@ class TodoItemsRepository {
         ),
         TodoItem(
             id = "3",
-            text = "Very looooooooooooooooooooooooooooooooooooooooooooooooong todo",
+            text = "Certain but she but shyness why cottage. Gay the put instrument sir entreaties affronting. Pretended exquisite see cordially the you. Weeks quiet do vexed or whose. Motionless if no to affronting imprudence no precaution. My indulged as disposal strongly attended. Parlors men express had private village man. Discovery moonlight recommend all one not. Indulged to answered prospect it bachelor is he bringing shutters. Pronounce forfeited mr direction oh he dashwoods ye unwilling.",
             importance = TodoItemImportance.HIGH,
             isDone = true,
-            created = LocalDate.of(2050, 6, 10),
+            created = LocalDate.of(2050, 6, 2),
             deadline = LocalDate.of(2051, 8, 22),
         ),
         TodoItem(
