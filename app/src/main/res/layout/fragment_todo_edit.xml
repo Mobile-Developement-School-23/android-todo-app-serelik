@@ -42,7 +42,6 @@
 
             <EditText
                 android:id="@+id/editText"
-                android:importantForAutofill="no"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
@@ -50,6 +49,7 @@
                 android:background="@drawable/bg_8dp"
                 android:gravity="top"
                 android:hint="@string/edit_todo_hint"
+                android:importantForAutofill="no"
                 android:inputType="textAutoCorrect"
                 android:minHeight="104dp"
                 android:padding="16dp"

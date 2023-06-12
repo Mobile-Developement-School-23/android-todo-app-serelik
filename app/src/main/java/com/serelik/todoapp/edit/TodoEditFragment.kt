@@ -1,5 +1,6 @@
 package com.serelik.todoapp.edit
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.text.SpannableString
 import android.view.LayoutInflater
@@ -11,9 +12,13 @@ import com.serelik.todoapp.ImportanceTextModifyHelper
 import com.serelik.todoapp.R
 import com.serelik.todoapp.databinding.FragmentTodoEditBinding
 import com.serelik.todoapp.model.TodoItemImportance
+import java.util.Calendar
+
 
 class TodoEditFragment : Fragment() {
     private val viewBinding by viewBinding(FragmentTodoEditBinding::bind)
+
+    var dateAndTime: Calendar = Calendar.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,5 +58,22 @@ class TodoEditFragment : Fragment() {
         spinnerAdapter.setDropDownViewResource(R.layout.item_spinner_dropped)
 
         viewBinding.spinner.adapter = spinnerAdapter
+
+        viewBinding.switchCompat.setOnCheckedChangeListener { switchView, isChecked ->
+            if (isChecked)
+                setDate()
+        }
+
     }
+
+    private fun setDate() {
+        DatePickerDialog(
+            requireContext(), null,
+            dateAndTime[Calendar.YEAR],
+            dateAndTime[Calendar.MONTH],
+            dateAndTime[Calendar.DAY_OF_MONTH]
+        )
+            .show()
+    }
+
 }
