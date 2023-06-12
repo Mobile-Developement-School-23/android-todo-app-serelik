@@ -10,6 +10,8 @@
         <item name="checkboxStyle">@style/checkbox</item>
         <item name="colorPrimary">@color/back_primary</item>
         <item name="colorOnSecondary">@color/white</item>
+        <item name="android:actionMenuTextColor">@color/blue</item>
+        <item name="android:actionMenuTextAppearance">@style/Button</item>
 
     </style>
 </resources>

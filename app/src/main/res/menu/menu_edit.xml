@@ -2,10 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_hide"
-        android:checked="true"
-        android:icon="@drawable/selector_visibilty"
-        android:iconTint="@color/blue"
-        android:title=""
+        android:id="@+id/action_save"
+        android:title="@string/save"
         app:showAsAction="ifRoom" />
+
 </menu>

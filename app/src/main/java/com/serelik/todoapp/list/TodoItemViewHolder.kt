@@ -3,11 +3,11 @@ package com.serelik.todoapp.list
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
-import android.text.style.ImageSpan
 import android.text.style.StrikethroughSpan
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.serelik.todoapp.ImportanceTextModifyHelper
 import com.serelik.todoapp.R
 import com.serelik.todoapp.databinding.ItemTodoBinding
 import com.serelik.todoapp.model.TodoItem
@@ -20,7 +20,6 @@ class TodoItemViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: TodoItem) {
-
         binding.textViewTodo.text =
             when {
                 item.isDone -> {
@@ -43,7 +42,9 @@ class TodoItemViewHolder(
                     strikeThroughText
                 }
 
-                item.importance != TodoItemImportance.NONE -> modifyText(item)
+                item.importance != TodoItemImportance.NONE -> ImportanceTextModifyHelper.modifyText(
+                    item.text, item.importance, itemView.context
+                )
 
                 else -> item.text
             }
@@ -60,22 +61,6 @@ class TodoItemViewHolder(
 
         binding.checkbox.setButtonIconDrawableResource(buttonDrawableRes)
 
-    }
-
-    private fun modifyText(item: TodoItem): SpannableString {
-        val spannableText = SpannableString("  ${item.text} ")
-        val drawableRes = if (item.importance == TodoItemImportance.HIGH)
-            R.drawable.ic_priority_high
-        else R.drawable.ic_priority_low
-
-        spannableText.setSpan(
-            ImageSpan(itemView.context, drawableRes),
-            0,
-            1,
-            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-
-        return spannableText
     }
 
     companion object {

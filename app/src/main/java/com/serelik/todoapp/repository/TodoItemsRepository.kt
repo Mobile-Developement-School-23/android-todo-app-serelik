@@ -5,7 +5,6 @@ import com.serelik.todoapp.model.TodoItemImportance
 import java.time.LocalDate
 
 object TodoItemsRepository {
-
     fun getItems() = listOf(
         TodoItem(
             id = "1",
