@@ -12,9 +12,13 @@ import com.serelik.todoapp.databinding.FragmentTodoListBinding
 import com.serelik.todoapp.repository.TodoItemsRepository
 
 class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
-    private val todoItemAdapter = TodoItemAdapter()
+    private val todoItemAdapter = TodoItemAdapter(
+        onTodoClickListener = ::openEditFragment
+    )
 
     private val viewBinding by viewBinding(FragmentTodoListBinding::bind)
+
+    val supportFragmentManager by lazy { requireActivity().supportFragmentManager }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -32,13 +36,11 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
         }
 
         viewBinding.floatingActionButton.setOnClickListener {
-            val supportFragmentManager = requireActivity().supportFragmentManager
             supportFragmentManager.beginTransaction()
                 .replace(android.R.id.content, TodoEditFragment())
-                .addToBackStack("Todo edit fragment")
+                .addToBackStack("Todo add fragment")
                 .commit()
         }
-
 
     }
 
@@ -53,5 +55,12 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
             R.drawable.ic_visibility_on
         }
         getVisibilityTodoItemButton()?.setIcon(notificationIcon)
+    }
+
+    private fun openEditFragment(id: String) {
+        supportFragmentManager.beginTransaction()
+            .replace(android.R.id.content, TodoEditFragment.createFragment(id))
+            .addToBackStack("Edit_id_Key")
+            .commit()
     }
 }

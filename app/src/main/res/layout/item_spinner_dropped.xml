@@ -4,5 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:minWidth="164dp"
+    android:minHeight="48dp"
     android:padding="16dp"
     android:textAppearance="@style/Body" />

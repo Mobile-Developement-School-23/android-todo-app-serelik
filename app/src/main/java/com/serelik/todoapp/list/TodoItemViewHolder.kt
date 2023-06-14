@@ -7,19 +7,24 @@ import android.text.style.StrikethroughSpan
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.serelik.todoapp.DateFormatterHelper
 import com.serelik.todoapp.ImportanceTextModifyHelper
 import com.serelik.todoapp.R
 import com.serelik.todoapp.databinding.ItemTodoBinding
 import com.serelik.todoapp.model.TodoItem
 import com.serelik.todoapp.model.TodoItemImportance
-import java.time.format.DateTimeFormatter
 
 
 class TodoItemViewHolder(
     private val binding: ItemTodoBinding,
+    private val onTodoClickListener: (id:String) -> Unit
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: TodoItem) {
+
+        binding.root.setOnClickListener {
+            onTodoClickListener(item.id)
+        }
         binding.textViewTodo.text =
             when {
                 item.isDone -> {
@@ -52,7 +57,7 @@ class TodoItemViewHolder(
         if (item.deadline != null) {
             binding.textViewDate.isVisible = true
             binding.textViewDate.text =
-                item.deadline.format(dateFormatter)
+                DateFormatterHelper.format(item.deadline)
         } else binding.textViewDate.isVisible = false
         binding.checkbox.isChecked = item.isDone
 
@@ -63,8 +68,6 @@ class TodoItemViewHolder(
 
     }
 
-    companion object {
-        private val dateFormatter: DateTimeFormatter by lazy { DateTimeFormatter.ofPattern("d MMMM yyyy") }
-    }
+
 
 }

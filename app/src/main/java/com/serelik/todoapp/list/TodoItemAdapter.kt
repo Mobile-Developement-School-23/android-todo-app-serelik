@@ -7,12 +7,15 @@ import com.serelik.todoapp.databinding.ItemTodoBinding
 import com.serelik.todoapp.model.TodoItem
 
 
-class TodoItemAdapter() : ListAdapter<TodoItem, TodoItemViewHolder>(TodoItemCallback()) {
+class TodoItemAdapter(
+    private val onTodoClickListener: (id:String) -> Unit
+) : ListAdapter<TodoItem, TodoItemViewHolder>(TodoItemCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoItemViewHolder {
         val inflater: LayoutInflater = LayoutInflater.from(parent.context)
         val binding = ItemTodoBinding.inflate(inflater, parent, false)
         return TodoItemViewHolder(
-            binding
+            binding,
+            onTodoClickListener
         )
     }
 

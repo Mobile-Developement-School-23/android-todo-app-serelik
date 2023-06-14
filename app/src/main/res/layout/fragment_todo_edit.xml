@@ -135,6 +135,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="20dp"
                 android:drawablePadding="12dp"
+                android:enabled="false"
                 android:text="@string/Delete"
                 android:textAppearance="@style/Body"
                 android:textColor="@color/selector_delete_button"

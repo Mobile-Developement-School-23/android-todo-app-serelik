@@ -11,5 +11,6 @@
     <string name="importance_title">Важность</string>
     <string name="edit_todo_hint">Напиши что-нибудь</string>
     <string name="deadline_title">Сделать до</string>
+    <string name="empty_todo_edit_error_message">Ты не можешь сохранить пустое поле</string>
 
 </resources>
