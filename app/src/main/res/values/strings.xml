@@ -13,5 +13,6 @@
     <string name="deadline_title">Сделать до</string>
     <string name="empty_todo_edit_error_message">Ты не можешь сохранить пустое поле</string>
     <string name="is_done_count">Выполнено - %d</string>
+    <string name="newTodo">Новое</string>
 
 </resources>

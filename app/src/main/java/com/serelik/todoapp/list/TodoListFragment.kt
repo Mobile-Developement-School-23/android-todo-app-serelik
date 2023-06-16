@@ -36,7 +36,8 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
     private val todoItemAdapter by lazy {
         TodoItemAdapter(
             onTodoClickListener = ::openEditFragment,
-            changeIsDoneListener = viewModel::changedStateDone
+            changeIsDoneListener = viewModel::changedStateDone,
+            onNewTodoClickListener = ::openAddFragment
         )
     }
 
@@ -78,12 +79,9 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
             viewModel.changeDoneVisibility()
             true
         }
-
         viewBinding.floatingActionButton.setOnClickListener {
-            supportFragmentManager.beginTransaction()
-                .replace(android.R.id.content, TodoEditFragment())
-                .addToBackStack("Todo add fragment")
-                .commit()
+            openAddFragment()
+
         }
 
         swipeFunctionality()
@@ -142,6 +140,9 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
             ) = false
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                if (viewHolder !is TodoItemViewHolder)
+                    return
+
                 val pos = viewHolder.adapterPosition
                 val item = todoItemAdapter.getItemTodo(pos)
 
@@ -163,7 +164,9 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
                 actionState: Int,
                 isCurrentlyActive: Boolean
             ) {
-                //1. Background color based upon direction swiped
+                if (viewHolder !is TodoItemViewHolder)
+                    return
+
                 paint.color = when {
                     dX < 0 -> deleteColor
                     else -> checkedDoneColor
@@ -176,7 +179,6 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
 
                 canvas.drawRect(rect, paint)
 
-                //2. Printing the icons
                 val textMargin = resources.getDimension(R.dimen.DeleteDrawableMargin)
                     .roundToInt()
                 val drawableHeight = swipeDeleteIcon?.intrinsicHeight ?: 0
@@ -199,7 +201,6 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
                     )
                 }
 
-                //3. Drawing icon based upon direction swiped
                 if (dX < 0) swipeDeleteIcon?.draw(canvas) else swipeCheckedIcon?.draw(canvas)
 
                 super.onChildDraw(
@@ -216,6 +217,14 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
         })
 
         swipeHelper.attachToRecyclerView(viewBinding.recyclerView)
+
+    }
+
+    fun openAddFragment() {
+        supportFragmentManager.beginTransaction()
+            .replace(android.R.id.content, TodoEditFragment())
+            .addToBackStack("Todo add fragment")
+            .commit()
 
     }
 
