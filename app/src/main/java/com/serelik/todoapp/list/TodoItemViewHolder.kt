@@ -17,7 +17,9 @@ import com.serelik.todoapp.model.TodoItemImportance
 
 class TodoItemViewHolder(
     private val binding: ItemTodoBinding,
-    private val onTodoClickListener: (id:String) -> Unit
+    private val onTodoClickListener: (id: String) -> Unit,
+    private val changeIsDoneListener: (id: String, isDone: Boolean) -> Unit
+
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: TodoItem) {
@@ -25,6 +27,15 @@ class TodoItemViewHolder(
         binding.root.setOnClickListener {
             onTodoClickListener(item.id)
         }
+
+        binding.checkbox.setOnCheckedChangeListener { checkBoxView, isChecked ->
+            if (!checkBoxView.isPressed)
+                return@setOnCheckedChangeListener
+
+            changeIsDoneListener(item.id, isChecked)
+
+        }
+
         binding.textViewTodo.text =
             when {
                 item.isDone -> {
@@ -67,7 +78,6 @@ class TodoItemViewHolder(
         binding.checkbox.setButtonIconDrawableResource(buttonDrawableRes)
 
     }
-
 
 
 }

@@ -4,5 +4,5 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:minWidth="164dp"
-    android:minHeight="48dp"
+    android:minHeight="@dimen/SpinnerItemMinHeight"
     android:textAppearance="@style/Body" />

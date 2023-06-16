@@ -2,10 +2,12 @@ package com.serelik.todoapp.repository
 
 import com.serelik.todoapp.model.TodoItem
 import com.serelik.todoapp.model.TodoItemImportance
+import com.serelik.todoapp.model.TodoListScreenModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import java.time.LocalDate
 
 object TodoItemsRepository {
-
 
     private val list = mutableListOf(
         TodoItem(
@@ -116,9 +118,14 @@ object TodoItemsRepository {
         ),
     )
 
-    fun getItems() = list.toList()
+    var isDoneVisible = true
 
-    fun addTodo(todoItem: TodoItem) {
+    private val todoItemsStateFlow = MutableStateFlow(createTodoListScreenModel())
+
+    val todoItemsFlow = todoItemsStateFlow.asStateFlow()
+
+
+    private fun addTodo(todoItem: TodoItem) {
         list.add(todoItem.copy(id = list.size.toString(), created = LocalDate.now()))
     }
 
@@ -126,6 +133,7 @@ object TodoItemsRepository {
         list.removeIf {
             it.id == id
         }
+        updateListFlow()
     }
 
     fun updateTodo(todoItem: TodoItem) {
@@ -134,10 +142,42 @@ object TodoItemsRepository {
             list[index] = todoItem.copy(modified = LocalDate.now())
         else
             addTodo(todoItem)
+        updateListFlow()
     }
 
     fun getTodo(id: String): TodoItem? {
         return list.find { it.id == id }
+    }
+
+    fun changedStateDone(itemId: String, isDone: Boolean) {
+        val index = list.indexOfFirst { it.id == itemId }
+
+        if (index == -1)
+            return
+
+        val todoItem = list[index]
+
+        list[index] = todoItem.copy(isDone = isDone)
+        updateListFlow()
+    }
+
+    private fun updateListFlow() {
+        todoItemsStateFlow.value = createTodoListScreenModel()
+    }
+
+    fun changeDoneVisibility() {
+        isDoneVisible = !isDoneVisible
+        updateListFlow()
+
+    }
+
+    private fun createTodoListScreenModel(): TodoListScreenModel {
+        val newList = if (isDoneVisible) {
+            list.toList()
+        } else
+            list.filter { !it.isDone }
+        val doneCount = list.count { it.isDone }
+        return TodoListScreenModel(newList, isDoneVisible, doneCount)
     }
 
 }

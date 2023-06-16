@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.serelik.todoapp.DateFormatterHelper
 import com.serelik.todoapp.ImportanceTextModifyHelper
@@ -20,6 +21,9 @@ import java.time.LocalDate
 import java.util.Calendar
 
 class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
+
+    private val viewModel: TodoEditViewModel by viewModels()
+
     private val viewBinding by viewBinding(FragmentTodoEditBinding::bind)
 
     private val supportFragmentManager by lazy { requireActivity().supportFragmentManager }
