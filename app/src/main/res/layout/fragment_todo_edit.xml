@@ -38,7 +38,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp">
 
             <EditText
                 android:id="@+id/editText"
@@ -50,10 +51,12 @@
                 android:gravity="top"
                 android:hint="@string/edit_todo_hint"
                 android:importantForAutofill="no"
-                android:inputType="textAutoCorrect"
+                android:inputType="textMultiLine"
                 android:minHeight="104dp"
                 android:padding="16dp"
                 android:textAppearance="@style/Body"
+                android:textColor="@color/label_primary"
+                android:textColorHint="@color/label_tertiary"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 

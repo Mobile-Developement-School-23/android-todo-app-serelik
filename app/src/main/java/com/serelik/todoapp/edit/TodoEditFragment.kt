@@ -14,11 +14,8 @@ import com.serelik.todoapp.DateFormatterHelper
 import com.serelik.todoapp.ImportanceTextModifyHelper
 import com.serelik.todoapp.R
 import com.serelik.todoapp.databinding.FragmentTodoEditBinding
-import com.serelik.todoapp.model.TodoItem
 import com.serelik.todoapp.model.TodoItemImportance
-import com.serelik.todoapp.repository.TodoItemsRepository
 import java.time.LocalDate
-import java.util.Calendar
 
 class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
 
@@ -28,16 +25,13 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
 
     private val supportFragmentManager by lazy { requireActivity().supportFragmentManager }
 
-    var newDeadline: LocalDate? = null
-
-    var created: LocalDate? = null
-
-    var dateAndTime: Calendar = Calendar.getInstance()
-
-    val itemId by lazy { arguments?.getString(EDIT_ID_KEY) ?: "-1" }
+    private val itemId by lazy { arguments?.getString(EDIT_ID_KEY) ?: "-1" }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        viewModel.getTodoItem(itemId)
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -71,7 +65,7 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
             if (!switchView.isPressed)
                 return@setOnCheckedChangeListener
             if (isChecked)
-                setDate()
+                showDatePicker()
             else {
                 viewBinding.textViewDeadlineDate.text = null
                 viewBinding.textViewDeadlineDate.isVisible = false
@@ -84,14 +78,9 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
 
         viewBinding.toolbar.menu.findItem(R.id.action_save).setOnMenuItemClickListener {
             if (viewBinding.editText.text.isNotBlank()) {
-                TodoItemsRepository.updateTodo(
-                    TodoItem(
-                        id = itemId,
-                        text = viewBinding.editText.text.toString(),
-                        created = created ?: LocalDate.now(),
-                        importance = TodoItemImportance.values()[viewBinding.spinner.selectedItemPosition],
-                        deadline = newDeadline
-                    )
+                viewModel.save(
+                    text = viewBinding.editText.text.toString(),
+                    importance = TodoItemImportance.values()[viewBinding.spinner.selectedItemPosition],
                 )
                 supportFragmentManager.popBackStack()
             } else Toast.makeText(
@@ -102,31 +91,35 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
             true
         }
 
+        viewBinding.textViewDeadlineDate.setOnClickListener { showDatePicker() }
+
+
+        bindTodo()
+
         if (itemId != "-1") {
-            bindTodo(itemId)
             viewBinding.textViewDelete.isEnabled = true
             viewBinding.textViewDelete.setOnClickListener {
-                TodoItemsRepository.removeTodo(itemId)
+                viewModel.remove()
                 supportFragmentManager.popBackStack()
             }
         }
     }
 
-    private fun setDate() {
+    private fun showDatePicker() {
+        val deadLine = viewModel.newDeadline ?: LocalDate.now()
+
         val dialog = DatePickerDialog(
             requireContext(), dateSetListener,
-            dateAndTime[Calendar.YEAR],
-            dateAndTime[Calendar.MONTH],
-            dateAndTime[Calendar.DAY_OF_MONTH]
+            deadLine.year,
+            deadLine.monthValue,
+            deadLine.dayOfMonth
         )
         dialog.setOnCancelListener { viewBinding.switchCompat.isChecked = false }
         dialog.show()
     }
 
-    fun bindTodo(id: String) {
-        val currentTodoItem = TodoItemsRepository.getTodo(id) ?: return
-
-        created = currentTodoItem.created
+    private fun bindTodo() {
+        val currentTodoItem = viewModel.todoItem
 
         viewBinding.apply {
             editText.setText(currentTodoItem.text)
@@ -145,7 +138,7 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
             viewBinding.textViewDeadlineDate.isVisible = true
 
             val deadline = LocalDate.of(year, monthOfYear, dayOfMonth)
-            newDeadline = deadline
+            viewModel.newDeadline = deadline
             viewBinding.textViewDeadlineDate.text = DateFormatterHelper.format(deadline)
 
         }
