@@ -14,7 +14,6 @@ import com.serelik.todoapp.databinding.ItemTodoBinding
 import com.serelik.todoapp.model.TodoItem
 import com.serelik.todoapp.model.TodoItemImportance
 
-
 class TodoItemViewHolder(
     private val binding: ItemTodoBinding,
     private val onTodoClickListener: (id: String) -> Unit,
@@ -22,21 +21,20 @@ class TodoItemViewHolder(
 
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(item: TodoItem) {
+    fun bind(item: TodoItem) = with(binding) {
 
-        binding.root.setOnClickListener {
+        root.setOnClickListener {
             onTodoClickListener(item.id)
         }
 
-        binding.checkbox.setOnCheckedChangeListener { checkBoxView, isChecked ->
+        checkbox.setOnCheckedChangeListener { checkBoxView, isChecked ->
             if (!checkBoxView.isPressed)
                 return@setOnCheckedChangeListener
-
             changeIsDoneListener(item.id, isChecked)
 
         }
 
-        binding.textViewTodo.text =
+        textViewTodo.text =
             when {
                 item.isDone -> {
                     val strikeThroughText = SpannableString(item.text)
@@ -66,18 +64,18 @@ class TodoItemViewHolder(
             }
 
         if (item.deadline != null) {
-            binding.textViewDate.isVisible = true
-            binding.textViewDate.text =
+            textViewDate.isVisible = true
+            textViewDate.text =
                 DateFormatterHelper.format(item.deadline)
-        } else binding.textViewDate.isVisible = false
-        binding.checkbox.isChecked = item.isDone
+        } else textViewDate.isVisible = false
+        checkbox.isChecked = item.isDone
 
         val buttonDrawableRes =
-            if (item.importance == TodoItemImportance.HIGH) R.drawable.selector_checkbox_high else R.drawable.selector_checkbox
+            if (item.importance == TodoItemImportance.HIGH)
+                R.drawable.selector_checkbox_high
+            else
+                R.drawable.selector_checkbox
 
-        binding.checkbox.setButtonIconDrawableResource(buttonDrawableRes)
-
+        checkbox.setButtonIconDrawableResource(buttonDrawableRes)
     }
-
-
 }

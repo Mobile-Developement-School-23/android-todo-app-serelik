@@ -8,7 +8,6 @@ import com.serelik.todoapp.databinding.ItemNewTodoBinding
 import com.serelik.todoapp.databinding.ItemTodoBinding
 import com.serelik.todoapp.model.TodoItem
 
-
 class TodoItemAdapter(
     private val onTodoClickListener: (id: String) -> Unit,
     private val changeIsDoneListener: (id: String, isDone: Boolean) -> Unit,
@@ -28,7 +27,6 @@ class TodoItemAdapter(
             val binding = ItemNewTodoBinding.inflate(inflater, parent, false)
             NewTodoItemViewHolder(binding, onNewTodoClickListener)
         }
-
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {

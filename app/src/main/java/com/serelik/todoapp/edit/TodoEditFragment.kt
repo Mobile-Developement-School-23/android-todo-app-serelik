@@ -21,84 +21,42 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
 
     private val viewModel: TodoEditViewModel by viewModels()
 
-    private val viewBinding by viewBinding(FragmentTodoEditBinding::bind)
+    private val binding by viewBinding(FragmentTodoEditBinding::bind)
 
     private val supportFragmentManager by lazy { requireActivity().supportFragmentManager }
 
     private val itemId by lazy { arguments?.getString(EDIT_ID_KEY) ?: "-1" }
 
+    private var dateSetListener =
+        OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+            binding.textViewDeadlineDate.isVisible = true
+
+            val deadline = LocalDate.of(year, monthOfYear, dayOfMonth)
+            viewModel.newDeadline = deadline
+            binding.textViewDeadlineDate.text = DateFormatterHelper.format(deadline)
+
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         viewModel.getTodoItem(itemId)
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val priorityList = arrayOf(
-            SpannableString(getString(R.string.importance_none)),
-            ImportanceTextModifyHelper.modifyText(
-                getString(R.string.importance_low),
-                TodoItemImportance.LOW,
-                requireContext()
-            ),
-            ImportanceTextModifyHelper.modifyText(
-                getString(R.string.importance_high),
-                TodoItemImportance.HIGH,
-                requireContext()
-            )
-        )
+        setupSpinner()
+        setupSwitch()
+        setupToolbar()
 
-        val spinnerAdapter = TodoEditSpannableAdapter(
-            view.context,
-            R.layout.item_spinner,
-            priorityList
-        )
-
-        spinnerAdapter.setDropDownViewResource(R.layout.item_spinner_dropped)
-
-        viewBinding.spinner.adapter = spinnerAdapter
-
-        viewBinding.switchCompat.setOnCheckedChangeListener { switchView, isChecked ->
-            if (!switchView.isPressed)
-                return@setOnCheckedChangeListener
-            if (isChecked)
-                showDatePicker()
-            else {
-                viewBinding.textViewDeadlineDate.text = null
-                viewBinding.textViewDeadlineDate.isVisible = false
-            }
-        }
-
-        viewBinding.toolbar.setNavigationOnClickListener {
-            supportFragmentManager.popBackStack()
-        }
-
-        viewBinding.toolbar.menu.findItem(R.id.action_save).setOnMenuItemClickListener {
-            if (viewBinding.editText.text.isNotBlank()) {
-                viewModel.save(
-                    text = viewBinding.editText.text.toString(),
-                    importance = TodoItemImportance.values()[viewBinding.spinner.selectedItemPosition],
-                )
-                supportFragmentManager.popBackStack()
-            } else Toast.makeText(
-                requireContext(),
-                getString(R.string.empty_todo_edit_error_message),
-                Toast.LENGTH_SHORT
-            ).show()
-            true
-        }
-
-        viewBinding.textViewDeadlineDate.setOnClickListener { showDatePicker() }
-
+        binding.textViewDeadlineDate.setOnClickListener { showDatePicker() }
 
         bindTodo()
 
         if (itemId != "-1") {
-            viewBinding.textViewDelete.isEnabled = true
-            viewBinding.textViewDelete.setOnClickListener {
+            binding.textViewDelete.isEnabled = true
+            binding.textViewDelete.setOnClickListener {
                 viewModel.remove()
                 supportFragmentManager.popBackStack()
             }
@@ -114,14 +72,14 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
             deadLine.monthValue,
             deadLine.dayOfMonth
         )
-        dialog.setOnCancelListener { viewBinding.switchCompat.isChecked = false }
+        dialog.setOnCancelListener { binding.switchCompat.isChecked = false }
         dialog.show()
     }
 
     private fun bindTodo() {
         val currentTodoItem = viewModel.todoItem
 
-        viewBinding.apply {
+        binding.apply {
             editText.setText(currentTodoItem.text)
             spinner.setSelection(currentTodoItem.importance.ordinal)
 
@@ -133,15 +91,67 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
         }
     }
 
-    private var dateSetListener =
-        OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-            viewBinding.textViewDeadlineDate.isVisible = true
+    private fun setupSpinner() {
+        val priorityList = arrayOf(
+            SpannableString(getString(R.string.importance_none)),
+            ImportanceTextModifyHelper.modifyText(
+                getString(R.string.importance_low),
+                TodoItemImportance.LOW,
+                requireContext()
+            ),
+            ImportanceTextModifyHelper.modifyText(
+                getString(R.string.importance_high),
+                TodoItemImportance.HIGH,
+                requireContext()
+            )
+        )
 
-            val deadline = LocalDate.of(year, monthOfYear, dayOfMonth)
-            viewModel.newDeadline = deadline
-            viewBinding.textViewDeadlineDate.text = DateFormatterHelper.format(deadline)
+        val spinnerAdapter = TodoEditSpannableAdapter(
+            requireContext(),
+            R.layout.item_spinner,
+            priorityList
+        )
 
+        spinnerAdapter.setDropDownViewResource(R.layout.item_spinner_dropped)
+
+        binding.spinner.adapter = spinnerAdapter
+    }
+
+    private fun setupSwitch() {
+        binding.switchCompat.setOnCheckedChangeListener { switchView, isChecked ->
+            if (!switchView.isPressed)
+                return@setOnCheckedChangeListener
+            if (isChecked)
+                showDatePicker()
+            else {
+                binding.textViewDeadlineDate.text = null
+                binding.textViewDeadlineDate.isVisible = false
+            }
         }
+    }
+
+    private fun setupToolbar() {
+        binding.toolbar.setNavigationOnClickListener {
+            supportFragmentManager.popBackStack()
+        }
+
+        binding.toolbar.menu.findItem(R.id.action_save).setOnMenuItemClickListener {
+            if (binding.editText.text.isNotBlank()) {
+                viewModel.save(
+                    text = binding.editText.text.toString(),
+                    importance = TodoItemImportance.values()[binding.spinner.selectedItemPosition],
+                )
+                supportFragmentManager.popBackStack()
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.empty_todo_edit_error_message),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            true
+        }
+    }
 
     companion object {
         private const val EDIT_ID_KEY = "Edit_id_Key"

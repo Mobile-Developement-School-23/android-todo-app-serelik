@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.serelik.todoapp.repository.TodoItemsRepository
 
 class TodoListViewModel : ViewModel() {
-    val repository = TodoItemsRepository
+    private val repository = TodoItemsRepository
     val toDoItemFlow = repository.todoItemsFlow
 
     fun changedStateDone(itemId: String, isDone: Boolean) {

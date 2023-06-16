@@ -29,8 +29,6 @@ import kotlin.math.roundToInt
 
 class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
 
-    private lateinit var swipeHelper: ItemTouchHelper
-
     private val viewModel: TodoListViewModel by viewModels()
 
     private val todoItemAdapter by lazy {
@@ -43,7 +41,7 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
 
     private val viewBinding by viewBinding(FragmentTodoListBinding::bind)
 
-    val supportFragmentManager by lazy { requireActivity().supportFragmentManager }
+    private val supportFragmentManager by lazy { requireActivity().supportFragmentManager }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,12 +79,8 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
         }
         viewBinding.floatingActionButton.setOnClickListener {
             openAddFragment()
-
         }
-
         swipeFunctionality()
-
-
     }
 
     private fun getVisibilityTodoItemButton(): MenuItem? {
@@ -109,7 +103,7 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
             .commit()
     }
 
-    fun swipeFunctionality() {
+    private fun swipeFunctionality() {
         val displayMetrics: DisplayMetrics = resources.displayMetrics
         val width = (displayMetrics.widthPixels / displayMetrics.density).toInt().dp
 
@@ -121,12 +115,10 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
         val deleteColor = ContextCompat.getColor(requireContext(), R.color.red)
         val checkedDoneColor = ContextCompat.getColor(requireContext(), R.color.green)
 
-
-        swipeHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
+        val swipeHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
             0,
             ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
         ) {
-
             val rect = Rect().apply {
                 left = 0
                 right = width
@@ -151,7 +143,6 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
                     viewModel.remove(item.id)
                 } else
                     viewModel.changedStateDone(item.id, !item.isDone)
-
 
             }
 
@@ -179,23 +170,23 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
 
                 canvas.drawRect(rect, paint)
 
-                val textMargin = resources.getDimension(R.dimen.DeleteDrawableMargin)
+                val iconMargin = resources.getDimension(R.dimen.DeleteDrawableMargin)
                     .roundToInt()
                 val drawableHeight = swipeDeleteIcon?.intrinsicHeight ?: 0
                 val verticalPadding = (viewHolder.itemView.height - drawableHeight) / 2
                 if (swipeCheckedIcon != null) {
                     swipeCheckedIcon.bounds = Rect(
-                        textMargin,
+                        iconMargin,
                         viewHolder.itemView.top + verticalPadding,
-                        textMargin + swipeCheckedIcon.intrinsicWidth,
+                        iconMargin + swipeCheckedIcon.intrinsicWidth,
                         viewHolder.itemView.top + swipeCheckedIcon.intrinsicHeight + verticalPadding
                     )
                 }
                 if (swipeDeleteIcon != null) {
                     swipeDeleteIcon.bounds = Rect(
-                        width - textMargin * 2 - swipeDeleteIcon.intrinsicWidth,
+                        width - iconMargin * 2 - swipeDeleteIcon.intrinsicWidth,
                         viewHolder.itemView.top + verticalPadding,
-                        width - textMargin * 2,
+                        width - iconMargin * 2,
                         viewHolder.itemView.top + swipeDeleteIcon.intrinsicHeight
                                 + verticalPadding
                     )
@@ -220,7 +211,7 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
 
     }
 
-    fun openAddFragment() {
+    private fun openAddFragment() {
         supportFragmentManager.beginTransaction()
             .replace(android.R.id.content, TodoEditFragment())
             .addToBackStack("Todo add fragment")
