@@ -40,7 +40,7 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel.getTodoItem(itemId)
+        viewModel.loadTodoItem(itemId)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -125,6 +125,7 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
                 showDatePicker()
             else {
                 binding.textViewDeadlineDate.text = null
+                viewModel.newDeadline = null
                 binding.textViewDeadlineDate.isVisible = false
             }
         }

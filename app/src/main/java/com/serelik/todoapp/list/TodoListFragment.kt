@@ -73,7 +73,6 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
         recyclerView.adapter = todoItemAdapter
 
         getVisibilityTodoItemButton()?.setOnMenuItemClickListener {
-
             viewModel.changeDoneVisibility()
             true
         }

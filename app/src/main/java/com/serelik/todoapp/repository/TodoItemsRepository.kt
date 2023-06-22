@@ -148,7 +148,7 @@ object TodoItemsRepository {
         updateListFlow()
     }
 
-    fun getTodo(id: String): TodoItem? {
+    fun loadTodo(id: String): TodoItem? {
         return list.find { it.id == id }
     }
 

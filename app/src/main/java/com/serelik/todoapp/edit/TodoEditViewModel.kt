@@ -8,14 +8,15 @@ import java.time.LocalDate
 
 class TodoEditViewModel : ViewModel() {
 
-    private val repository = TodoItemsRepository
-
+    //todo think about no late init
     var newDeadline: LocalDate? = null
 
     lateinit var todoItem: TodoItem
 
-    fun getTodoItem(id: String) {
-        todoItem = repository.getTodo(id) ?: TodoItem(
+    private val repository = TodoItemsRepository
+
+    fun loadTodoItem(id: String) {
+        todoItem = repository.loadTodo(id) ?: TodoItem(
             id = "-1",
             created = LocalDate.now(),
             text = ""
