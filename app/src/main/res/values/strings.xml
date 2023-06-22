@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">ToDoApp</string>
+    <string name="MyTodo">Мои дела</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="save">Сохранить</string>
+    <string name="Delete">Удалить</string>
+    <string name="importance_high">"  Высокий"</string>
+    <string name="importance_none">Нет</string>
+    <string name="importance_low">Низкий</string>
+    <string name="importance_title">Важность</string>
+    <string name="edit_todo_hint">Напиши что-нибудь</string>
+    <string name="deadline_title">Сделать до</string>
+    <string name="empty_todo_edit_error_message">Ты не можешь сохранить пустое поле</string>
+    <string name="is_done_count">Выполнено - %d</string>
+    <string name="newTodo">Новое</string>
+
 </resources>
