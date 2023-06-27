@@ -1,36 +1,44 @@
 package com.serelik.todoapp.edit
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.serelik.todoapp.data.local.repository.TodoRepository
 import com.serelik.todoapp.model.TodoItem
 import com.serelik.todoapp.model.TodoItemImportance
-import com.serelik.todoapp.repository.TodoItemsRepository
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 class TodoEditViewModel : ViewModel() {
 
-    //todo think about no late init
     var newDeadline: LocalDate? = null
 
-    lateinit var todoItem: TodoItem
+    private val _todoItemLiveData: MutableLiveData<TodoItem> = MutableLiveData()
+    val todoItemLiveData: LiveData<TodoItem> = _todoItemLiveData
 
-    private val repository = TodoItemsRepository
+    private val repository = TodoRepository
 
     fun loadTodoItem(id: String) {
-        todoItem = repository.loadTodo(id) ?: TodoItem(
-            id = "-1",
-            created = LocalDate.now(),
-            text = ""
-        )
-
-        newDeadline = todoItem.deadline
+        viewModelScope.launch {
+            val todoItem = repository.loadTodo(id)
+            _todoItemLiveData.postValue(todoItem)
+            newDeadline = todoItem.deadline
+        }
     }
 
     fun save(text: String, importance: TodoItemImportance) {
+        val todoItem = _todoItemLiveData.value ?: return
         val newItem = todoItem.copy(text = text, importance = importance, deadline = newDeadline)
-        repository.updateTodo(newItem)
+        viewModelScope.launch {
+            repository.updateTodo(newItem)
+        }
     }
 
     fun remove() {
-        repository.removeTodo(todoItem.id)
+        val todoItem = _todoItemLiveData.value ?: return
+        viewModelScope.launch {
+            repository.removeTodo(todoItem.id)
+        }
     }
 }

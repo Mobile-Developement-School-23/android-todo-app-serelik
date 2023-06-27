@@ -14,6 +14,7 @@ import com.serelik.todoapp.DateFormatterHelper
 import com.serelik.todoapp.ImportanceTextModifyHelper
 import com.serelik.todoapp.R
 import com.serelik.todoapp.databinding.FragmentTodoEditBinding
+import com.serelik.todoapp.model.TodoItem
 import com.serelik.todoapp.model.TodoItemImportance
 import java.time.LocalDate
 
@@ -25,7 +26,7 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
 
     private val supportFragmentManager by lazy { requireActivity().supportFragmentManager }
 
-    private val itemId by lazy { arguments?.getString(EDIT_ID_KEY) ?: "-1" }
+    private val itemId by lazy { arguments?.getString(EDIT_ID_KEY) ?: "" }
 
     private var dateSetListener =
         OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
@@ -52,7 +53,7 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
 
         binding.textViewDeadlineDate.setOnClickListener { showDatePicker() }
 
-        bindTodo()
+        viewModel.todoItemLiveData.observe(viewLifecycleOwner, ::bindTodo)
 
         if (itemId != "-1") {
             binding.textViewDelete.isEnabled = true
@@ -76,16 +77,15 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
         dialog.show()
     }
 
-    private fun bindTodo() {
-        val currentTodoItem = viewModel.todoItem
+    private fun bindTodo(todoItem: TodoItem) {
 
         binding.apply {
-            editText.setText(currentTodoItem.text)
-            spinner.setSelection(currentTodoItem.importance.ordinal)
+            editText.setText(todoItem.text)
+            spinner.setSelection(todoItem.importance.ordinal)
 
-            if (currentTodoItem.deadline != null) {
+            if (todoItem.deadline != null) {
                 switchCompat.isChecked = true
-                textViewDeadlineDate.text = DateFormatterHelper.format(currentTodoItem.deadline)
+                textViewDeadlineDate.text = DateFormatterHelper.format(todoItem.deadline)
                 textViewDeadlineDate.isVisible = true
             } else textViewDeadlineDate.isVisible = false
         }

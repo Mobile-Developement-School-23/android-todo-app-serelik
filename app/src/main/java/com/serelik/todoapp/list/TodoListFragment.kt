@@ -5,7 +5,6 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.util.Log
 import android.util.TypedValue
 import android.view.MenuItem
 import android.view.View
@@ -14,17 +13,13 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.serelik.todoapp.R
-import com.serelik.todoapp.edit.TodoEditFragment
 import com.serelik.todoapp.databinding.FragmentTodoListBinding
-import kotlinx.coroutines.launch
+import com.serelik.todoapp.edit.TodoEditFragment
 import kotlin.math.roundToInt
 
 class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
@@ -46,25 +41,19 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.toDoItemFlow.collect { model ->
-
-                    todoItemAdapter.submitList(model.items)
-                    updateVisibilityTodoDoneItemsStatus(model.isDoneVisible)
-                    viewBinding.textViewDoneCount.text =
-                        getString(R.string.is_done_count, model.doneCount)
-                    viewBinding.textViewDoneCount.isInvisible = !model.isDoneVisible
-                }
-            }
-        }
-
+        viewModel.changeDoneVisibility()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Log.d(this::class.simpleName, "onViewCreated")
+        viewModel.liveData.observe(viewLifecycleOwner) { model ->
+            todoItemAdapter.submitList(model.items)
+            updateVisibilityTodoDoneItemsStatus(model.isDoneVisible)
+            viewBinding.textViewDoneCount.text =
+                getString(R.string.is_done_count, model.doneCount)
+            viewBinding.textViewDoneCount.isInvisible = !model.isDoneVisible
+        }
 
         val recyclerView = viewBinding.recyclerView
 
