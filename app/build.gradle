@@ -16,6 +16,9 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders = [YANDEX_CLIENT_ID:"0d0970774e284fa8ba9ff70b6b06479a"]
+
     }
 
     buildTypes {
@@ -60,4 +63,6 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
     testImplementation "androidx.room:room-testing:$room_version"
+
+    implementation "com.yandex.android:authsdk:2.5.1"
 }
