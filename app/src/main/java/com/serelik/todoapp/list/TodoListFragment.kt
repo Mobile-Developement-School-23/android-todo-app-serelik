@@ -8,11 +8,15 @@ import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,6 +24,8 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.serelik.todoapp.R
 import com.serelik.todoapp.databinding.FragmentTodoListBinding
 import com.serelik.todoapp.edit.TodoEditFragment
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
@@ -42,6 +48,29 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
         super.onCreate(savedInstanceState)
 
         viewModel.changeDoneVisibility()
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.flowLoading.collectLatest { status ->
+                    when (status) {
+                        is LoadingStatus.Error -> {
+                            Toast.makeText(
+                                requireContext(),
+                                "Нет интернета",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            viewBinding.swipeRefreshLayout.isRefreshing = false
+                        }
+
+                        LoadingStatus.Loading -> {
+                            viewBinding.swipeRefreshLayout.isRefreshing = true
+                        }
+
+                        LoadingStatus.Success -> viewBinding.swipeRefreshLayout.isRefreshing = false
+
+                    }
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -67,6 +96,10 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
         }
         viewBinding.floatingActionButton.setOnClickListener {
             openAddFragment()
+        }
+
+        viewBinding.swipeRefreshLayout.setOnRefreshListener {
+            viewModel.loadListFromServer()
         }
         swipeFunctionality()
     }

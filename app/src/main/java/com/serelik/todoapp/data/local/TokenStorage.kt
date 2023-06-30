@@ -26,7 +26,7 @@ class TokenStorage {
 
     companion object {
         private const val TOKEN_KEY = "TOKEN_KEY"
-        private const val SHARED_PREF_KEY = "SHARED_PREF_KEY"
+        private const val SHARED_PREF_KEY = "SHARED_PREF_KEY_TOKEN"
     }
 
 }

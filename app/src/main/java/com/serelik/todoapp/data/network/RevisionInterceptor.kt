@@ -1,24 +1,25 @@
 package com.serelik.todoapp.data.network
 
+import com.serelik.todoapp.data.local.RevisionStorage
 import okhttp3.Interceptor
-import okhttp3.Request
 import okhttp3.Response
+import okhttp3.internal.closeQuietly
 
 class RevisionInterceptor : Interceptor {
 
+    private val revisionStorage = RevisionStorage()
+
     override fun intercept(chain: Interceptor.Chain): Response {
         val original = chain.request()
-        val originalHttpUrl = original.url
 
-        val url =
-            originalHttpUrl.newBuilder().addQueryParameter(AUTHORIZATION_KEY,"X-Last-Known-Revision 0")
-                .build()
+        val request = original.newBuilder()
+            .header(HEADER_KEY, revisionStorage.getRevision().toString())
+            .build()
 
-        val request = Request.Builder().url(url).build()
         return chain.proceed(request)
     }
 
     companion object {
-        private const val AUTHORIZATION_KEY = "Authorization"
+        private const val HEADER_KEY = "X-Last-Known-Revision"
     }
 }

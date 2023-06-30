@@ -24,7 +24,7 @@ class TodoEntityMapper {
 
     fun fromDomain(todoItem: TodoItem): TodoEntity {
         return TodoEntity(
-            id = UUID.fromString(if (todoItem.id == "") TodoEntity.DEFAULT_UUID else todoItem.id),
+            id = if (todoItem.id == "") UUID.randomUUID() else UUID.fromString(todoItem.id),
             created = todoItem.created.toMillis(),
             text = todoItem.text,
             importance = todoItem.importance,

@@ -6,9 +6,13 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.WorkManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.serelik.todoapp.R
+import com.serelik.todoapp.TodoApp
 import com.serelik.todoapp.data.local.TokenStorage
+import com.serelik.todoapp.data.workers.WorkRepository
 import com.serelik.todoapp.databinding.FragmentAuthorizationBinding
 import com.serelik.todoapp.list.TodoListFragment
 import com.yandex.authsdk.YandexAuthLoginOptions
@@ -40,6 +44,8 @@ class AuthorizationFragment : Fragment(R.layout.fragment_authorization) {
                     val yandexAuthToken = sdk.extractToken(result.resultCode, result.data)
                     if (yandexAuthToken?.value != null) {
                         tokenStorage.saveToken(yandexAuthToken.value)
+
+                        planUpdateList()
                         openListFragment()
                     }
 
@@ -72,6 +78,15 @@ class AuthorizationFragment : Fragment(R.layout.fragment_authorization) {
 
         val intent = sdk.createLoginIntent(loginOptionsBuilder.build())
         resultLauncher.launch(intent)
+    }
+
+    private fun planUpdateList() {
+        WorkManager.getInstance(TodoApp.context)
+            .enqueueUniquePeriodicWork(
+                "upload_from_server_periodical",
+                ExistingPeriodicWorkPolicy.UPDATE,
+                WorkRepository.loadListRequestPeriodical()
+            )
     }
 
 }

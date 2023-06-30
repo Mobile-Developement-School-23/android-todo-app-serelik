@@ -1,10 +1,10 @@
 package com.serelik.todoapp.data.local
 
 import com.serelik.todoapp.TodoApp
+import com.serelik.todoapp.data.local.entities.TodoEntity
 import com.serelik.todoapp.model.TodoItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import java.time.LocalDateTime
 
 class LocalDataSource {
 
@@ -24,16 +24,17 @@ class LocalDataSource {
         dataBase.todoDao().deleteById(id)
     }
 
-    suspend fun save(todoItem: TodoItem) {
-        dataBase.todoDao().insert(mapper.fromDomain(todoItem.copy(modified = LocalDateTime.now())))
-    }
+    suspend fun save(todoItem: TodoEntity) = dataBase.todoDao().insert(todoItem)
 
     suspend fun changedStateDone(todoId: String, isDone: Boolean) =
         dataBase.todoDao().changedStateDone(todoId, isDone)
 
-
     suspend fun getTodo(todoId: String): TodoItem =
         mapper.fromEntity(dataBase.todoDao().loadById(todoId))
+
+    suspend fun deleteAllTodo() = dataBase.todoDao().deleteAll()
+
+    suspend fun saveAll(newTodoList: List<TodoEntity>) = dataBase.todoDao().insertAll(newTodoList)
 
 
 }

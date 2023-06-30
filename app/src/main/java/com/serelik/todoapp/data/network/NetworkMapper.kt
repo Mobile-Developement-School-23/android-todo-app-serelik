@@ -6,7 +6,7 @@ import com.serelik.todoapp.data.network.models.TodoItemResponse
 import com.serelik.todoapp.model.TodoItemImportance
 import java.util.UUID
 
-class fromNetworkMapper {
+class NetworkMapper {
     fun fromEntity(entity: TodoEntity): TodoItemResponse {
 
         return TodoItemResponse(

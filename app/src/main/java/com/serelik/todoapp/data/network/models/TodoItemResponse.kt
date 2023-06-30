@@ -19,4 +19,6 @@ data class TodoItemResponse(
     val created: Long,
     @SerialName("changed_at")
     val modified: Long? = null,
+    @SerialName("last_updated_by")
+    val lastUpdatedBy: String? = "123"
 )

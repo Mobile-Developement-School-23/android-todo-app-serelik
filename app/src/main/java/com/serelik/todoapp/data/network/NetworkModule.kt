@@ -11,24 +11,28 @@ import retrofit2.create
 object NetworkModule {
     private const val baseUrl = "https://beta.mrdekk.ru/todobackend/"
 
-    private val json = Json {
+    val json = Json {
         ignoreUnknownKeys = true
+        prettyPrint = true
+        encodeDefaults = true
     }
 
-    val loggingInterceptor = HttpLoggingInterceptor().apply {
+    private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }
 
-    val httpClient = OkHttpClient
+    private val httpClient = OkHttpClient
         .Builder()
-        .addInterceptor(loggingInterceptor)
+        .addNetworkInterceptor(WrongRevisionInterceptor())
         .addInterceptor(TokenInterceptor())
+        .addInterceptor(RevisionInterceptor())
+        .addInterceptor(loggingInterceptor)
         .addNetworkInterceptor(loggingInterceptor)
         .build()
 
     private val contentType = "application/json".toMediaType()
 
-    val retrofit = Retrofit.Builder()
+    private val retrofit = Retrofit.Builder()
         .baseUrl(baseUrl)
         .addConverterFactory(json.asConverterFactory(contentType))
         .client(httpClient)
