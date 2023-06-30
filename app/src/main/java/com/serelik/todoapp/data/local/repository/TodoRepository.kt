@@ -86,10 +86,17 @@ object TodoRepository {
         localDataSource.save(entity)
     }
 
-    suspend fun changedStateDone(itemId: String, isDone: Boolean) {
-        localDataSource.changedStateDone(itemId, isDone)
+    suspend fun changedStateDone(item: TodoItem, isDone: Boolean) {
 
+        val entity = databaseMapper.fromDomain(item.copy(isDone = isDone))
+        WorkManager.getInstance(TodoApp.context)
+            .enqueueUniqueWork(
+                "update_on_server_id=${item.id}",
+                ExistingWorkPolicy.KEEP,
+                WorkRepository.updateTodoRequest(entity)
+            )
 
+        localDataSource.changedStateDone(item.id, isDone)
     }
 
     suspend fun synchronizeList() {

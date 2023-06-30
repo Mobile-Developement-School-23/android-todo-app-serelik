@@ -163,7 +163,7 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
                 if (direction == ItemTouchHelper.LEFT) {
                     viewModel.remove(item.id)
                 } else
-                    viewModel.changedStateDone(item.id, !item.isDone)
+                    viewModel.changedStateDone(item, !item.isDone)
 
             }
 

@@ -9,6 +9,7 @@ import androidx.work.WorkManager
 import com.serelik.todoapp.TodoApp
 import com.serelik.todoapp.data.local.repository.TodoRepository
 import com.serelik.todoapp.data.workers.WorkRepository
+import com.serelik.todoapp.model.TodoItem
 import com.serelik.todoapp.model.TodoListScreenModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -29,9 +30,9 @@ class TodoListViewModel : ViewModel() {
         loadListFromServer()
     }
 
-    fun changedStateDone(itemId: String, isDone: Boolean) {
+    fun changedStateDone(item: TodoItem, isDone: Boolean) {
         viewModelScope.launch {
-            repository.changedStateDone(itemId, isDone)
+            repository.changedStateDone(item, isDone)
         }
     }
 
