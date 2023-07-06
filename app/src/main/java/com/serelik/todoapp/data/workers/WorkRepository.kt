@@ -50,11 +50,9 @@ object WorkRepository {
 
     private fun createDataForUpdate(todoEntity: TodoEntity): Data {
         val networkModel = mapper.fromEntity(todoEntity)
-        val json = NetworkModule.json.encodeToString(networkModel)
+        //val json = NetworkModule.json.encodeToString(networkModel)
 
-        Log.d("json", json)
-
-        return Data.Builder().putString(Constant.BODY_KEY_WORKER, json).build()
+        return Data.Builder().build()//.putString(Constant.BODY_KEY_WORKER, json).build()
     }
 
     fun loadListRequestPeriodical() = PeriodicWorkRequest

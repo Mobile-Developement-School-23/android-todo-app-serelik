@@ -11,12 +11,12 @@ class DeleteTodoWorker(context: Context, workerParams: WorkerParameters) :
         context,
         workerParams
     ) {
-    private val repository = TodoRepository
-
+  /*  private val repository = TodoRepository
+*/
     override suspend fun doWork(): Result {
         return try {
-            val idTodo = inputData.getString(Constant.ID_KEY_WORKER) ?: return Result.success()
-            repository.removeTodoOnServer(idTodo)
+         /*   val idTodo = inputData.getString(Constant.ID_KEY_WORKER) ?: return Result.success()
+            repository.removeTodoOnServer(idTodo)*/
             Result.success()
         } catch (error: Throwable) {
             Result.retry()

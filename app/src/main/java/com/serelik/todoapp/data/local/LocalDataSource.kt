@@ -1,16 +1,16 @@
 package com.serelik.todoapp.data.local
 
+import android.content.Context
 import com.serelik.todoapp.TodoApp
 import com.serelik.todoapp.data.local.entities.TodoEntity
 import com.serelik.todoapp.model.TodoItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class LocalDataSource {
+class LocalDataSource @Inject constructor(private val mapper: TodoEntityMapper, context: Context) {
 
-    private val dataBase = TodoDataBase.createDataBase(applicationContext = TodoApp.context)
-
-    private val mapper = TodoEntityMapper()
+    private val dataBase = TodoDataBase.createDataBase(applicationContext = context)
 
     fun getAllTodos(): Flow<List<TodoItem>> = dataBase.todoDao().loadAllTodos().map { list ->
         list.map { mapper.fromEntity(entity = it) }

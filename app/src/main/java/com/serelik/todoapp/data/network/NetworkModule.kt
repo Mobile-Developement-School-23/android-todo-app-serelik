@@ -1,42 +1,74 @@
 package com.serelik.todoapp.data.network
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import dagger.Module
+import dagger.Provides
+import dagger.Reusable
 import kotlinx.serialization.json.Json
+import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.create
+import javax.inject.Singleton
 
-object NetworkModule {
-    private const val baseUrl = "https://beta.mrdekk.ru/todobackend/"
+@Module
+class NetworkModule {
 
-    val json = Json {
-        ignoreUnknownKeys = true
-        prettyPrint = true
-        encodeDefaults = true
+    @Provides
+    fun provideJson(): Json {
+        return Json {
+            ignoreUnknownKeys = true
+            prettyPrint = true
+            encodeDefaults = true
+        }
     }
 
-    private val loggingInterceptor = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
+    @Provides
+    fun provideLoggingInterceptor(): HttpLoggingInterceptor {
+        return HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
     }
 
-    private val httpClient = OkHttpClient
-        .Builder()
-        .addNetworkInterceptor(WrongRevisionInterceptor())
-        .addInterceptor(TokenInterceptor())
-        .addInterceptor(RevisionInterceptor())
-        .addInterceptor(loggingInterceptor)
-        .addNetworkInterceptor(loggingInterceptor)
-        .build()
+    @Provides
+    fun provideHttpClient(
+        loggingInterceptor: HttpLoggingInterceptor,
+        tokenInterceptor: TokenInterceptor,
+        revisionInterceptor: RevisionInterceptor
+    ): OkHttpClient {
+        return OkHttpClient
+            .Builder()
+            .addNetworkInterceptor(WrongRevisionInterceptor())
+            .addInterceptor(tokenInterceptor)
+            .addInterceptor(revisionInterceptor)
+            .addInterceptor(loggingInterceptor)
+            .addNetworkInterceptor(loggingInterceptor)
+            .build()
+    }
 
-    private val contentType = "application/json".toMediaType()
+    @Provides
+    fun provideContentType(): MediaType {
+        return "application/json".toMediaType()
 
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(baseUrl)
-        .addConverterFactory(json.asConverterFactory(contentType))
-        .client(httpClient)
-        .build()
+    }
 
-    val todoApiService: TodoApiService = retrofit.create()
+    @Provides
+    @Reusable
+    fun provideRetrofit(httpClient: OkHttpClient, json: Json, contentType: MediaType): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .addConverterFactory(json.asConverterFactory(contentType))
+            .client(httpClient)
+            .build()
+    }
+
+    @Provides
+    @Reusable
+    fun provideTodoApiService(retrofit: Retrofit): TodoApiService = retrofit.create()
+
+    companion object {
+        private const val baseUrl = "https://beta.mrdekk.ru/todobackend/"
+    }
 }

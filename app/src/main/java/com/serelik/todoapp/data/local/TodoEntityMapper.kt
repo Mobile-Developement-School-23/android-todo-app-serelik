@@ -6,8 +6,9 @@ import com.serelik.todoapp.extensions.toLocalDateTime
 import com.serelik.todoapp.extensions.toMillis
 import com.serelik.todoapp.model.TodoItem
 import java.util.UUID
+import javax.inject.Inject
 
-class TodoEntityMapper {
+class TodoEntityMapper @Inject constructor() {
     fun fromEntity(entity: TodoEntity): TodoItem {
 
         return TodoItem(
@@ -22,6 +23,7 @@ class TodoEntityMapper {
         )
     }
 
+    //todo rename
     fun fromDomain(todoItem: TodoItem): TodoEntity {
         return TodoEntity(
             id = if (todoItem.id == "") UUID.randomUUID() else UUID.fromString(todoItem.id),

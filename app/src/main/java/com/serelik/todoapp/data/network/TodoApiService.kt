@@ -10,7 +10,7 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface TodoApiService {
-    @GET("list") //todo check those
+    @GET("list")
     suspend fun getListTodos(): TodoItemListResponse
 
     @POST("list")

@@ -2,25 +2,43 @@ package com.serelik.todoapp.edit
 
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
+import android.content.Context
 import android.os.Bundle
 import android.text.SpannableString
 import android.view.View
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.createViewModelLazy
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.serelik.todoapp.DateFormatterHelper
 import com.serelik.todoapp.ImportanceTextModifyHelper
+import com.serelik.todoapp.MainActivity
 import com.serelik.todoapp.R
+import com.serelik.todoapp.compoment
 import com.serelik.todoapp.databinding.FragmentTodoEditBinding
+import com.serelik.todoapp.di.MultiViewModelFactory
+import com.serelik.todoapp.di.TodoEditFragmentComponent
+import com.serelik.todoapp.di.TodoListFragmentComponent
 import com.serelik.todoapp.model.TodoItem
 import com.serelik.todoapp.model.TodoItemImportance
+import dagger.Lazy
 import java.time.LocalDate
+import javax.inject.Inject
+import javax.inject.Provider
 
 class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
 
-    private val viewModel: TodoEditViewModel by viewModels()
+    private val viewModel: TodoEditViewModel by viewModels() {
+        viewModelFactory
+    }
+
+    lateinit var component: TodoEditFragmentComponent
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private val binding by viewBinding(FragmentTodoEditBinding::bind)
 
@@ -39,7 +57,14 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
+
+        component = (requireActivity() as MainActivity)
+            .activityComponent
+            .todoEditFragmentComponent().create()
+
+        component.inject(this)
 
         viewModel.loadTodoItem(itemId)
     }

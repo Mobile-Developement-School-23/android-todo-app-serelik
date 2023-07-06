@@ -13,15 +13,15 @@ class AddTodoWorker(context: Context, workerParams: WorkerParameters) : Coroutin
     context,
     workerParams
 ) {
-    private val repository = TodoRepository
-
+   /* private val repository = TodoRepository
+*/
     override suspend fun doWork(): Result {
         return try {
-            val todoString =
+/*            val todoString =
                 inputData.getString(Constant.BODY_KEY_WORKER) ?: return Result.success()
 
-            val todo = NetworkModule.json.decodeFromString<TodoItemResponse>(todoString)
-            repository.addTodoOnServer(todo)
+            val todo = NetworkModule.json.decodeFromString<TodoItemResponse>(todoString)*/
+            /* repository.addTodoOnServer(todo)*/
             Result.success()
         } catch (error: Throwable) {
             Result.retry()

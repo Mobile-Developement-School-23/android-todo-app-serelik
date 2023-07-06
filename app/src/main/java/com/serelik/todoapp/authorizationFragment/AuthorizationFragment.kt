@@ -1,6 +1,7 @@
 package com.serelik.todoapp.authorizationFragment
 
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -9,22 +10,31 @@ import androidx.fragment.app.Fragment
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.WorkManager
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.serelik.todoapp.MainActivity
 import com.serelik.todoapp.R
 import com.serelik.todoapp.TodoApp
+import com.serelik.todoapp.compoment
 import com.serelik.todoapp.data.local.TokenStorage
 import com.serelik.todoapp.data.workers.WorkRepository
 import com.serelik.todoapp.databinding.FragmentAuthorizationBinding
+import com.serelik.todoapp.di.AppComponent
+import com.serelik.todoapp.di.AuthorizationFragmentComponent
+import com.serelik.todoapp.di.TodoEditFragmentComponent
 import com.serelik.todoapp.list.TodoListFragment
 import com.yandex.authsdk.YandexAuthLoginOptions
 import com.yandex.authsdk.YandexAuthOptions
 import com.yandex.authsdk.YandexAuthSdk
 import com.yandex.authsdk.internal.strategy.LoginType
+import javax.inject.Inject
 
 class AuthorizationFragment : Fragment(R.layout.fragment_authorization) {
 
     private val binding by viewBinding(FragmentAuthorizationBinding::bind)
 
-    private val tokenStorage by lazy { TokenStorage() }
+    @Inject
+    lateinit var tokenStorage: TokenStorage
+
+    lateinit var component: AuthorizationFragmentComponent
 
     private val supportFragmentManager by lazy { requireActivity().supportFragmentManager }
 
@@ -45,7 +55,7 @@ class AuthorizationFragment : Fragment(R.layout.fragment_authorization) {
                     if (yandexAuthToken?.value != null) {
                         tokenStorage.saveToken(yandexAuthToken.value)
 
-                        planUpdateList()
+                        /*planUpdateList()*/
                         openListFragment()
                     }
 
@@ -54,6 +64,16 @@ class AuthorizationFragment : Fragment(R.layout.fragment_authorization) {
                 }
             }
         }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        component = (requireActivity() as MainActivity)
+            .activityComponent
+            .authorizationFragmentComponent().create()
+
+        component.inject(this)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -80,13 +100,14 @@ class AuthorizationFragment : Fragment(R.layout.fragment_authorization) {
         resultLauncher.launch(intent)
     }
 
-    private fun planUpdateList() {
-        WorkManager.getInstance(TodoApp.context)
-            .enqueueUniquePeriodicWork(
-                "upload_from_server_periodical",
-                ExistingPeriodicWorkPolicy.UPDATE,
-                WorkRepository.loadListRequestPeriodical()
-            )
-    }
+    //todo fix me
+    /* private fun planUpdateList() {
+         WorkManager.getInstance(requireContext())
+             .enqueueUniquePeriodicWork(
+                 "upload_from_server_periodical",
+                 ExistingPeriodicWorkPolicy.UPDATE,
+                 WorkRepository.loadListRequestPeriodical()
+             )
+     }*/
 
 }

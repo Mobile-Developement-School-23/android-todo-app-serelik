@@ -4,10 +4,11 @@ import com.serelik.todoapp.data.local.RevisionStorage
 import okhttp3.Interceptor
 import okhttp3.Response
 import okhttp3.internal.closeQuietly
+import javax.inject.Inject
 
-class RevisionInterceptor : Interceptor {
+class RevisionInterceptor @Inject constructor(private val revisionStorage: RevisionStorage) :
+    Interceptor {
 
-    private val revisionStorage = RevisionStorage()
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val original = chain.request()

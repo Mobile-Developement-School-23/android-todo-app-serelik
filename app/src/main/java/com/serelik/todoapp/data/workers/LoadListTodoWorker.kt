@@ -10,12 +10,12 @@ class LoadListTodoWorker(context: Context, workerParams: WorkerParameters) : Cor
     context,
     workerParams
 ) {
-    private val repository = TodoRepository
+  /*  private val repository = TodoRepository*/
 
     override suspend fun doWork(): Result {
         return try {
-            repository.synchronizeList()
-
+         /*   repository.synchronizeList()
+*/
             Result.success()
         } catch (error: Throwable) {
             error.printStackTrace()

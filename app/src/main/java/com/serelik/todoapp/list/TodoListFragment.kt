@@ -15,22 +15,34 @@ import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.serelik.todoapp.MainActivity
 import com.serelik.todoapp.R
 import com.serelik.todoapp.databinding.FragmentTodoListBinding
+import com.serelik.todoapp.di.TodoListFragmentComponent
 import com.serelik.todoapp.edit.TodoEditFragment
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 import kotlin.math.roundToInt
 
 class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
 
-    private val viewModel: TodoListViewModel by viewModels()
+    private val viewModel: TodoListViewModel by viewModels() {
+        viewModelFactory
+    }
+
+    lateinit var component: TodoListFragmentComponent
+
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private val todoItemAdapter by lazy {
         TodoItemAdapter(
@@ -46,6 +58,12 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        component = (requireActivity() as MainActivity)
+            .activityComponent
+            .todoListFragmentComponent().create()
+
+        component.inject(this)
 
         viewModel.changeDoneVisibility()
         lifecycleScope.launch {
@@ -66,6 +84,7 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
                         }
 
                         LoadingStatus.Success -> viewBinding.swipeRefreshLayout.isRefreshing = false
+
 
                     }
                 }

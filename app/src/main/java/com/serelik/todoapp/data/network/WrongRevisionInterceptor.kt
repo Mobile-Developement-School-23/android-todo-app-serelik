@@ -12,15 +12,14 @@ import okhttp3.internal.closeQuietly
 import java.io.IOException
 
 class WrongRevisionInterceptor : Interceptor {
-
-    private val revisionStorage = RevisionStorage()
+/*
+    private val revisionStorage = RevisionStorage()*/
 
     override fun intercept(chain: Interceptor.Chain): Response {
         try {
             val response = chain.proceed(chain.request())
-
-            if (response.code == BAD_REQUEST_CODE) {
-             //   response.body?.closeQuietly() // Fix crash IllegalStateException (https://github.com/square/retrofit/issues/3478)
+//todo fix me
+/*            if (response.code == BAD_REQUEST_CODE) {
                 if (response.body?.string() == BAD_REQUEST_BODY) {
                     response.body?.closeQuietly()
                     WorkManager.getInstance(TodoApp.context)
@@ -30,7 +29,7 @@ class WrongRevisionInterceptor : Interceptor {
                             WorkRepository.loadListRequest()
                         )
                 }
-            }
+            }*/
 
 
             return response

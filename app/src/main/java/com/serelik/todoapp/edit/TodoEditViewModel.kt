@@ -9,15 +9,17 @@ import com.serelik.todoapp.model.TodoItem
 import com.serelik.todoapp.model.TodoItemImportance
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import javax.inject.Inject
 
-class TodoEditViewModel : ViewModel() {
+class TodoEditViewModel @Inject constructor(
+    private val repository: TodoRepository
+) : ViewModel() {
 
     var newDeadline: LocalDate? = null
 
     private val _todoItemLiveData: MutableLiveData<TodoItem> = MutableLiveData()
     val todoItemLiveData: LiveData<TodoItem> = _todoItemLiveData
 
-    private val repository = TodoRepository
 
     fun loadTodoItem(id: String) {
         viewModelScope.launch {
@@ -41,4 +43,5 @@ class TodoEditViewModel : ViewModel() {
             repository.removeTodo(todoItem.id)
         }
     }
+
 }
