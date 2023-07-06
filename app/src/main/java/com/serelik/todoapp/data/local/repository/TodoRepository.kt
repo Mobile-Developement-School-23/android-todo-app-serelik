@@ -3,8 +3,11 @@ package com.serelik.todoapp.data.local.repository
 import com.serelik.todoapp.data.local.LocalDataSource
 import com.serelik.todoapp.data.local.RevisionStorage
 import com.serelik.todoapp.data.local.TodoEntityMapper
+import com.serelik.todoapp.data.local.entities.TodoDeletedEntity
+import com.serelik.todoapp.data.local.entities.TodoEntity
 import com.serelik.todoapp.data.network.NetworkMapper
 import com.serelik.todoapp.data.network.TodoApiService
+import com.serelik.todoapp.data.network.models.TodoItemListResponse
 import com.serelik.todoapp.data.network.models.TodoItemNetworkResponse
 import com.serelik.todoapp.data.network.models.TodoItemResponse
 import com.serelik.todoapp.di.ActivityScope
@@ -18,6 +21,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
+import java.util.UUID
 import javax.inject.Inject
 
 @ActivityScope
@@ -25,7 +29,8 @@ class TodoRepository @Inject constructor(
     private val localDataSource: LocalDataSource,
     private val revisionStorage: RevisionStorage,
     private val todoApiService: TodoApiService,
-    private val databaseMapper: TodoEntityMapper
+    private val databaseMapper: TodoEntityMapper,
+    private val networkMapper: NetworkMapper
 ) {
 
 
@@ -40,7 +45,7 @@ class TodoRepository @Inject constructor(
     }
 
     fun loadAllTodos(): Flow<TodoListScreenModel> {
-        return localDataSource.getAllTodos()
+        return localDataSource.getAllTodosFlow()
             .map { createTodoListScreenModel(it, isDoneVisible = true) }
     }
 
@@ -58,6 +63,7 @@ class TodoRepository @Inject constructor(
              )*/
 
         localDataSource.deleteById(id)
+
     }
 
     suspend fun updateTodo(todoItem: TodoItem) {
@@ -101,19 +107,12 @@ class TodoRepository @Inject constructor(
     suspend fun synchronizeList() = withContext(Dispatchers.IO) {
         try {
             _loadingFlow.value = LoadingStatus.Loading
-            val response = todoApiService.getListTodos()
-            val revision = response.revision
-            revisionStorage.saveRevision(revision)
-            val newTodoList =
-                response.todos.map { NetworkMapper().fromNetwork(it) }
-            localDataSource.deleteAllTodo()
-            localDataSource.saveAll(newTodoList)
+            synchronizeListInternal()
             _loadingFlow.value = LoadingStatus.Success
         } catch (e: Throwable) {
             _loadingFlow.value = LoadingStatus.Error(e)
             throw e
         }
-
     }
 
     suspend fun removeTodoOnServer(id: String) {
@@ -144,4 +143,51 @@ class TodoRepository @Inject constructor(
         return TodoListScreenModel(list, isDoneVisible, doneCount)
     }
 
+    private suspend fun synchronizeListInternal() = withContext(Dispatchers.IO) {
+        val response = todoApiService.getListTodos()
+        val revision = response.revision
+        revisionStorage.saveRevision(revision)
+        val todoFromNetworkList = response.todos.map { NetworkMapper().fromNetwork(it) }
+        val deletedMap = localDataSource.getAllDeletedTodos().associateBy { it.id }
+        val mergedListWithDeleted =
+            todoFromNetworkList.filter {
+                check(it, deletedMap)
+            }
+        val currentDataBase = localDataSource.getAllTodos().associateBy { it.id }.toMutableMap()
+
+        for (networkItem in mergedListWithDeleted) {
+            if (currentDataBase.contains(networkItem.id)) {
+                val databaseItem = currentDataBase[networkItem.id] ?: continue
+                if ((databaseItem.modified ?: 0) <= (networkItem.modified ?: 0)) {
+                    currentDataBase[networkItem.id] = networkItem
+                }
+            } else {
+                currentDataBase[networkItem.id] = networkItem
+            }
+        }
+
+
+        val resultList = currentDataBase.values.toList().sortedBy { it.created }
+
+        if (resultList == todoFromNetworkList)
+            return@withContext
+
+        val networkResultList =
+            TodoItemListResponse(
+                "",
+                resultList.map { networkMapper.fromEntity(it) },
+                0
+            )
+
+        val newResponse = todoApiService.sendToServer(networkResultList)
+
+        localDataSource.replaceAllTodo(newResponse.todos.map { networkMapper.fromNetwork(it) })
+    }
+
+    private fun check(entity: TodoEntity, deleteMap: Map<UUID, TodoDeletedEntity>): Boolean {
+        val todoDeletedEntity = deleteMap[entity.id] ?: return true
+        if (entity.modified == null)
+            return false
+        return todoDeletedEntity.deletedAt < entity.modified
+    }
 }

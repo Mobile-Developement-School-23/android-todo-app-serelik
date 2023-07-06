@@ -17,4 +17,11 @@ object DbContract {
         const val COLUMN_NAME_CREATED = "created"
         const val COLUMN_NAME_MODIFIED = "modified"
     }
+
+    object DeletedTodo {
+        const val TABLE_NAME = "todo_deleted"
+
+        const val COLUMN_NAME_ID =  BaseColumns._ID
+        const val COLUMN_NAME_DELETED_AT = "deleted_at"
+    }
 }

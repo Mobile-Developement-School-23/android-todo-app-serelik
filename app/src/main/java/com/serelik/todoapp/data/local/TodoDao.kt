@@ -4,13 +4,17 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import com.serelik.todoapp.data.local.entities.TodoEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TodoDao {
     @Query("SELECT * FROM todo ORDER BY created DESC")
-    fun loadAllTodos(): Flow<List<TodoEntity>>
+    fun loadAllTodosFlow(): Flow<List<TodoEntity>>
+
+    @Query("SELECT * FROM todo")
+    fun loadAllTodos(): List<TodoEntity>
 
     @Query("SELECT * FROM todo WHERE is_done = 0 ORDER BY created DESC ")
     fun loadAllUnDoneTodos(): Flow<List<TodoEntity>>
@@ -29,6 +33,12 @@ interface TodoDao {
 
     @Query("DELETE FROM todo")
     suspend fun deleteAll()
+
+    @Transaction
+    suspend fun replaceAll(todos: List<TodoEntity>) {
+        deleteAll()
+        insertAll(todos)
+    }
 
     @Query("UPDATE todo SET is_done = :isDone WHERE _id = :todoId")
     suspend fun changedStateDone(todoId: String, isDone: Boolean)

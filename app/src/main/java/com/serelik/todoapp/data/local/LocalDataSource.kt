@@ -1,20 +1,29 @@
 package com.serelik.todoapp.data.local
 
 import android.content.Context
-import com.serelik.todoapp.TodoApp
+import com.serelik.todoapp.data.local.entities.TodoDeletedEntity
 import com.serelik.todoapp.data.local.entities.TodoEntity
+import com.serelik.todoapp.extensions.toMillis
 import com.serelik.todoapp.model.TodoItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.time.LocalDateTime
+import java.util.UUID
 import javax.inject.Inject
 
 class LocalDataSource @Inject constructor(private val mapper: TodoEntityMapper, context: Context) {
 
     private val dataBase = TodoDataBase.createDataBase(applicationContext = context)
 
-    fun getAllTodos(): Flow<List<TodoItem>> = dataBase.todoDao().loadAllTodos().map { list ->
-        list.map { mapper.fromEntity(entity = it) }
-    }
+    fun getAllTodosFlow(): Flow<List<TodoItem>> =
+        dataBase.todoDao().loadAllTodosFlow().map { list ->
+            list.map { mapper.fromEntity(entity = it) }
+        }
+
+    fun getAllTodos(): List<TodoEntity> = dataBase.todoDao().loadAllTodos()
+
+    fun getAllDeletedTodos(): List<TodoDeletedEntity> = dataBase.todoDeletedDao().loadAllTodos()
+
 
     fun loadAllUnDoneTodos(): Flow<List<TodoItem>> =
         dataBase.todoDao().loadAllUnDoneTodos()
@@ -22,6 +31,12 @@ class LocalDataSource @Inject constructor(private val mapper: TodoEntityMapper, 
 
     suspend fun deleteById(id: String) {
         dataBase.todoDao().deleteById(id)
+
+        val todoDeleteEntity = TodoDeletedEntity(
+            UUID.fromString(id),
+            LocalDateTime.now().toMillis()
+        )
+        dataBase.todoDeletedDao().insert(todoDeleteEntity)
     }
 
     suspend fun save(todoItem: TodoEntity) = dataBase.todoDao().insert(todoItem)
@@ -33,6 +48,8 @@ class LocalDataSource @Inject constructor(private val mapper: TodoEntityMapper, 
         mapper.fromEntity(dataBase.todoDao().loadById(todoId))
 
     suspend fun deleteAllTodo() = dataBase.todoDao().deleteAll()
+
+    suspend fun replaceAllTodo(todos: List<TodoEntity>) = dataBase.todoDao().replaceAll(todos)
 
     suspend fun saveAll(newTodoList: List<TodoEntity>) = dataBase.todoDao().insertAll(newTodoList)
 

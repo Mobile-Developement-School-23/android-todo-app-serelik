@@ -5,6 +5,7 @@ import com.serelik.todoapp.data.network.models.TodoItemNetworkResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -12,6 +13,11 @@ import retrofit2.http.Path
 interface TodoApiService {
     @GET("list")
     suspend fun getListTodos(): TodoItemListResponse
+
+    @PATCH("list")
+    suspend fun sendToServer(
+        @Body body: TodoItemListResponse
+    ): TodoItemListResponse
 
     @POST("list")
     suspend fun addTodo(
