@@ -1,8 +1,11 @@
 package com.serelik.todoapp.di
 
 import androidx.lifecycle.ViewModelProvider
+import androidx.work.Configuration
+import com.serelik.todoapp.data.workers.SyncListTodoWorkerFactory
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.Subcomponent
 import javax.inject.Scope
 
@@ -33,4 +36,6 @@ interface ActivityComponent {
 interface ActivityModule {
     @Binds
     abstract fun viewModelFactory(factory: MultiViewModelFactory): ViewModelProvider.Factory
+
+
 }

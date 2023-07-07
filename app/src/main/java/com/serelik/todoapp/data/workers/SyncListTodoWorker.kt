@@ -4,17 +4,22 @@ import android.content.Context
 import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.serelik.todoapp.data.local.repository.TodoRepository
 
-class SyncListTodoWorker(context: Context, workerParams: WorkerParameters) : CoroutineWorker(
+class SyncListTodoWorker(
+    context: Context,
+    workerParams: WorkerParameters,
+    private val repository: TodoRepository
+) : CoroutineWorker(
     context,
     workerParams
 ) {
-  /*  private val repository = TodoRepository*/
+
 
     override suspend fun doWork(): Result {
         return try {
-         /*   repository.synchronizeList()
-*/
+            repository.synchronizeList()
+
             Result.success()
         } catch (error: Throwable) {
             error.printStackTrace()

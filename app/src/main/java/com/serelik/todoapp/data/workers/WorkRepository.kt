@@ -17,13 +17,10 @@ object WorkRepository {
     private val mapper = NetworkMapper()
 
     fun loadListRequest() = OneTimeWorkRequest
-        .Builder(SyncListTodoWorker::class.java)
-        .setConstraints(constraints)
-        .build()
 
-    fun updateTodoRequest(todoEntity: TodoEntity) = OneTimeWorkRequest
-        .Builder(UpdateTodoWorker::class.java)
-        .setInputData(createDataForUpdate(todoEntity))
+    fun syncTodoRequest() = OneTimeWorkRequest
+        .Builder(SyncListTodoWorker::class.java)
+        .setInitialDelay(1, timeUnit = TimeUnit.MINUTES)
         .setConstraints(constraints)
         .build()
 

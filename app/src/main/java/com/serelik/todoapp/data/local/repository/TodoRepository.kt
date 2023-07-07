@@ -1,5 +1,8 @@
 package com.serelik.todoapp.data.local.repository
 
+import android.content.Context
+import androidx.work.ExistingWorkPolicy
+import androidx.work.WorkManager
 import com.serelik.todoapp.data.local.LocalDataSource
 import com.serelik.todoapp.data.local.RevisionStorage
 import com.serelik.todoapp.data.local.TodoEntityMapper
@@ -10,7 +13,9 @@ import com.serelik.todoapp.data.network.TodoApiService
 import com.serelik.todoapp.data.network.models.TodoItemListResponse
 import com.serelik.todoapp.data.network.models.TodoItemNetworkResponse
 import com.serelik.todoapp.data.network.models.TodoItemResponse
+import com.serelik.todoapp.data.workers.WorkRepository
 import com.serelik.todoapp.di.ActivityScope
+import com.serelik.todoapp.di.AppScope
 import com.serelik.todoapp.list.LoadingStatus
 import com.serelik.todoapp.model.TodoItem
 import com.serelik.todoapp.model.TodoListScreenModel
@@ -24,13 +29,14 @@ import java.time.LocalDateTime
 import java.util.UUID
 import javax.inject.Inject
 
-@ActivityScope
+@AppScope
 class TodoRepository @Inject constructor(
     private val localDataSource: LocalDataSource,
     private val revisionStorage: RevisionStorage,
     private val todoApiService: TodoApiService,
     private val databaseMapper: TodoEntityMapper,
-    private val networkMapper: NetworkMapper
+    private val networkMapper: NetworkMapper,
+    private val context: Context
 ) {
 
 
@@ -61,7 +67,7 @@ class TodoRepository @Inject constructor(
                  ExistingWorkPolicy.KEEP,
                  WorkRepository.deleteByIdRequest(id)
              )*/
-
+        planSync()
         localDataSource.deleteById(id)
 
     }
@@ -87,7 +93,7 @@ class TodoRepository @Inject constructor(
                   ExistingWorkPolicy.KEEP,
                   workManagerRequest
               )*/
-
+        planSync()
         localDataSource.save(entity)
     }
 
@@ -100,7 +106,7 @@ class TodoRepository @Inject constructor(
                    ExistingWorkPolicy.KEEP,
                    WorkRepository.updateTodoRequest(entity)
                )*/
-
+        planSync()
         localDataSource.changedStateDone(item.id, isDone)
     }
 
@@ -182,6 +188,16 @@ class TodoRepository @Inject constructor(
         val newResponse = todoApiService.sendToServer(networkResultList)
 
         localDataSource.replaceAllTodo(newResponse.todos.map { networkMapper.fromNetwork(it) })
+    }
+
+    private fun planSync() {
+        WorkManager.getInstance(context)
+            .enqueueUniqueWork(
+                "sync",
+                ExistingWorkPolicy.REPLACE,
+                WorkRepository.syncTodoRequest()
+            )
+
     }
 
     private fun check(entity: TodoEntity, deleteMap: Map<UUID, TodoDeletedEntity>): Boolean {
