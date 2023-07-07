@@ -10,7 +10,7 @@ import com.serelik.todoapp.model.TodoItem
 
 class TodoItemAdapter(
     private val onTodoClickListener: (id: String) -> Unit,
-    private val changeIsDoneListener: (id: String, isDone: Boolean) -> Unit,
+    private val changeIsDoneListener: (item: TodoItem, isDone: Boolean) -> Unit,
     private val onNewTodoClickListener: () -> Unit,
 ) : ListAdapter<TodoItem, RecyclerView.ViewHolder>(TodoItemCallback()) {
 

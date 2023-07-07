@@ -17,7 +17,7 @@ import com.serelik.todoapp.model.TodoItemImportance
 class TodoItemViewHolder(
     private val binding: ItemTodoBinding,
     private val onTodoClickListener: (id: String) -> Unit,
-    private val changeIsDoneListener: (id: String, isDone: Boolean) -> Unit
+    private val changeIsDoneListener: (item: TodoItem, isDone: Boolean) -> Unit
 
 ) : RecyclerView.ViewHolder(binding.root) {
 
@@ -30,7 +30,7 @@ class TodoItemViewHolder(
         checkbox.setOnCheckedChangeListener { checkBoxView, isChecked ->
             if (!checkBoxView.isPressed)
                 return@setOnCheckedChangeListener
-            changeIsDoneListener(item.id, isChecked)
+            changeIsDoneListener(item, isChecked)
 
         }
 

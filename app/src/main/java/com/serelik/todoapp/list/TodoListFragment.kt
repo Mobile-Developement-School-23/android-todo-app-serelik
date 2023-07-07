@@ -5,10 +5,10 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.util.Log
 import android.util.TypedValue
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isInvisible
@@ -22,8 +22,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.serelik.todoapp.R
-import com.serelik.todoapp.edit.TodoEditFragment
 import com.serelik.todoapp.databinding.FragmentTodoListBinding
+import com.serelik.todoapp.edit.TodoEditFragment
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -46,25 +47,42 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        viewModel.changeDoneVisibility()
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.toDoItemFlow.collect { model ->
+                viewModel.flowLoading.collectLatest { status ->
+                    when (status) {
+                        is LoadingStatus.Error -> {
+                            Toast.makeText(
+                                requireContext(),
+                                "Нет интернета",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            viewBinding.swipeRefreshLayout.isRefreshing = false
+                        }
 
-                    todoItemAdapter.submitList(model.items)
-                    updateVisibilityTodoDoneItemsStatus(model.isDoneVisible)
-                    viewBinding.textViewDoneCount.text =
-                        getString(R.string.is_done_count, model.doneCount)
-                    viewBinding.textViewDoneCount.isInvisible = !model.isDoneVisible
+                        LoadingStatus.Loading -> {
+                            viewBinding.swipeRefreshLayout.isRefreshing = true
+                        }
+
+                        LoadingStatus.Success -> viewBinding.swipeRefreshLayout.isRefreshing = false
+
+                    }
                 }
             }
         }
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Log.d(this::class.simpleName, "onViewCreated")
+        viewModel.liveData.observe(viewLifecycleOwner) { model ->
+            todoItemAdapter.submitList(model.items)
+            updateVisibilityTodoDoneItemsStatus(model.isDoneVisible)
+            viewBinding.textViewDoneCount.text =
+                getString(R.string.is_done_count, model.doneCount)
+            viewBinding.textViewDoneCount.isInvisible = !model.isDoneVisible
+        }
 
         val recyclerView = viewBinding.recyclerView
 
@@ -78,6 +96,10 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
         }
         viewBinding.floatingActionButton.setOnClickListener {
             openAddFragment()
+        }
+
+        viewBinding.swipeRefreshLayout.setOnRefreshListener {
+            viewModel.loadListFromServer()
         }
         swipeFunctionality()
     }
@@ -141,7 +163,7 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
                 if (direction == ItemTouchHelper.LEFT) {
                     viewModel.remove(item.id)
                 } else
-                    viewModel.changedStateDone(item.id, !item.isDone)
+                    viewModel.changedStateDone(item, !item.isDone)
 
             }
 
