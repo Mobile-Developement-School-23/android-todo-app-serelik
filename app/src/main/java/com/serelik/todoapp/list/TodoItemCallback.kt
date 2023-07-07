@@ -1,12 +1,22 @@
 package com.serelik.todoapp.list
 
 import androidx.recyclerview.widget.DiffUtil
+import com.serelik.todoapp.model.NewTodo
 import com.serelik.todoapp.model.TodoItem
+import com.serelik.todoapp.model.TodoUiBaseItem
 
-class TodoItemCallback : DiffUtil.ItemCallback<TodoItem>() {
-    override fun areItemsTheSame(oldItem: TodoItem, newItem: TodoItem): Boolean =
-        oldItem.id == newItem.id
+class TodoItemCallback : DiffUtil.ItemCallback<TodoUiBaseItem>() {
+    override fun areItemsTheSame(oldItem: TodoUiBaseItem, newItem: TodoUiBaseItem): Boolean {
+        if (oldItem is NewTodo && newItem is NewTodo) return true
+        if (oldItem !is TodoItem || newItem !is TodoItem) return false
 
-    override fun areContentsTheSame(oldItem: TodoItem, newItem: TodoItem): Boolean =
-        oldItem == newItem
+        return oldItem.id == newItem.id
+    }
+
+    override fun areContentsTheSame(oldItem: TodoUiBaseItem, newItem: TodoUiBaseItem): Boolean {
+        if (oldItem is NewTodo && newItem is NewTodo) return true
+        if (oldItem !is TodoItem || newItem !is TodoItem) return false
+
+        return (oldItem as TodoItem) == (newItem as TodoItem)
+    }
 }

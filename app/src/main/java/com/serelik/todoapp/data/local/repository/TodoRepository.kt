@@ -14,8 +14,10 @@ import com.serelik.todoapp.data.workers.SyncListTodoWorker
 import com.serelik.todoapp.data.workers.WorkRepository
 import com.serelik.todoapp.di.AppScope
 import com.serelik.todoapp.list.LoadingStatus
+import com.serelik.todoapp.model.NewTodo
 import com.serelik.todoapp.model.TodoItem
 import com.serelik.todoapp.model.TodoListScreenModel
+import com.serelik.todoapp.model.TodoUiBaseItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,10 +36,6 @@ class TodoRepository @Inject constructor(
     private val networkMapper: NetworkMapper,
     private val context: Context
 ) {
-
-    private val _loadingFlow = MutableStateFlow<LoadingStatus>(LoadingStatus.Loading)
-    val loadingFlow: StateFlow<LoadingStatus> = _loadingFlow
-
     suspend fun loadTodo(id: String): TodoItem {
         if (id == TodoItem.NEW_TODO_ID) {
             return TodoItem()
@@ -79,7 +77,10 @@ class TodoRepository @Inject constructor(
         isDoneVisible: Boolean
     ): TodoListScreenModel {
         val doneCount = list.count { it.isDone }
-        return TodoListScreenModel(list, isDoneVisible, doneCount)
+        val listWithNewTodoItem = mutableListOf<TodoUiBaseItem>()
+        listWithNewTodoItem.addAll(list)
+        listWithNewTodoItem.add(NewTodo)
+        return TodoListScreenModel(listWithNewTodoItem, isDoneVisible, doneCount)
     }
 
     suspend fun synchronizeList() = withContext(Dispatchers.IO) {

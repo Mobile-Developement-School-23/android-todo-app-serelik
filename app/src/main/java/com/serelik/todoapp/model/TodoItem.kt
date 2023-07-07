@@ -11,7 +11,7 @@ data class TodoItem(
     val isDone: Boolean = false,
     val created: LocalDateTime = LocalDateTime.now(),
     val modified: LocalDateTime? = null
-) {
+) : TodoUiBaseItem {
     companion object {
         const val NEW_TODO_ID: String = "-1"
     }

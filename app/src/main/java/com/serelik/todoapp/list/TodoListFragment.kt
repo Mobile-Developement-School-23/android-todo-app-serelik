@@ -160,7 +160,7 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
                 }
 
                 val pos = viewHolder.adapterPosition
-                val item = todoItemAdapter.getItemTodo(pos)
+                val item = todoItemAdapter.getItemTodo(pos) ?: return
 
                 if (direction == ItemTouchHelper.LEFT) {
                     viewModel.remove(item.id)
