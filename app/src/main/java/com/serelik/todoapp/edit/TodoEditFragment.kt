@@ -69,7 +69,7 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
 
         binding.textViewDeadlineDate.setOnClickListener { showDatePicker() }
 
-        viewModel.todoItemLiveData.observe(viewLifecycleOwner, ::bindTodo)
+        viewModel.todoItem.observe(viewLifecycleOwner, ::bindTodo)
 
         if (itemId != TodoItem.NEW_TODO_ID) {
             binding.textViewDelete.isEnabled = true

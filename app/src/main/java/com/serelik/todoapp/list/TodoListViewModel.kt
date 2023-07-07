@@ -18,10 +18,11 @@ class TodoListViewModel @Inject constructor(private val repository: TodoReposito
 
     private var loadTodoJob: Job? = null
 
-    private val _liveData: MutableLiveData<TodoListScreenModel> = MutableLiveData()
-    val liveData: LiveData<TodoListScreenModel> = _liveData
+    private val _todoListScreenModel: MutableLiveData<TodoListScreenModel> = MutableLiveData()
+    val todoListScreenModel: LiveData<TodoListScreenModel> = _todoListScreenModel
 
-    val flowLoading = repository.loadingFlow
+    private val _loadingState: MutableLiveData<LoadingStatus> = MutableLiveData()
+    val loadingState: LiveData<LoadingStatus> = _loadingState
 
     init {
         loadListFromServer()
@@ -51,17 +52,22 @@ class TodoListViewModel @Inject constructor(private val repository: TodoReposito
 
         loadTodoJob = viewModelScope.launch {
             flow.collect {
-                _liveData.postValue(it)
+                _todoListScreenModel.postValue(it)
             }
         }
     }
 
     fun loadListFromServer() {
+
         viewModelScope.launch {
             try {
+                _loadingState.postValue(LoadingStatus.Loading)
                 repository.synchronizeList()
-            } catch (_: Throwable) {
+                _loadingState.postValue(LoadingStatus.Success)
+            } catch (e: Throwable) {
+                _loadingState.postValue(LoadingStatus.Error(e))
             }
+
         }
     }
 

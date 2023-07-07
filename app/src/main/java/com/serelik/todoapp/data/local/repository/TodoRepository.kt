@@ -74,17 +74,6 @@ class TodoRepository @Inject constructor(
         localDataSource.changedStateDone(item.id, isDone)
     }
 
-    suspend fun synchronizeList() = withContext(Dispatchers.IO) {
-        try {
-            _loadingFlow.value = LoadingStatus.Loading
-            synchronizeListInternal()
-            _loadingFlow.value = LoadingStatus.Success
-        } catch (e: Throwable) {
-            _loadingFlow.value = LoadingStatus.Error(e)
-            throw e
-        }
-    }
-
     private fun createTodoListScreenModel(
         list: List<TodoItem>,
         isDoneVisible: Boolean
@@ -93,7 +82,7 @@ class TodoRepository @Inject constructor(
         return TodoListScreenModel(list, isDoneVisible, doneCount)
     }
 
-    private suspend fun synchronizeListInternal() = withContext(Dispatchers.IO) {
+    suspend fun synchronizeList() = withContext(Dispatchers.IO) {
         val response = todoApiService.getListTodos()
         val revision = response.revision
         val todoFromNetworkList = response.todos.map { NetworkMapper().fromNetwork(it) }

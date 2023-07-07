@@ -17,19 +17,19 @@ class TodoEditViewModel @Inject constructor(
 
     var newDeadline: LocalDate? = null
 
-    private val _todoItemLiveData: MutableLiveData<TodoItem> = MutableLiveData()
-    val todoItemLiveData: LiveData<TodoItem> = _todoItemLiveData
+    private val _todoItem: MutableLiveData<TodoItem> = MutableLiveData()
+    val todoItem: LiveData<TodoItem> = _todoItem
 
     fun loadTodoItem(id: String) {
         viewModelScope.launch {
             val todoItem = repository.loadTodo(id)
-            _todoItemLiveData.postValue(todoItem)
+            _todoItem.postValue(todoItem)
             newDeadline = todoItem.deadline
         }
     }
 
     fun save(text: String, importance: TodoItemImportance) {
-        val todoItem = _todoItemLiveData.value ?: return
+        val todoItem = _todoItem.value ?: return
         val newItem = todoItem.copy(text = text, importance = importance, deadline = newDeadline)
         viewModelScope.launch {
             repository.updateTodo(newItem)
@@ -37,7 +37,7 @@ class TodoEditViewModel @Inject constructor(
     }
 
     fun remove() {
-        val todoItem = _todoItemLiveData.value ?: return
+        val todoItem = _todoItem.value ?: return
         viewModelScope.launch {
             repository.removeTodo(todoItem.id)
         }
