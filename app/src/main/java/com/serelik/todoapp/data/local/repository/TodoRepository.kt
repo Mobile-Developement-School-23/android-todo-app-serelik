@@ -39,7 +39,7 @@ class TodoRepository @Inject constructor(
     val loadingFlow: StateFlow<LoadingStatus> = _loadingFlow
 
     suspend fun loadTodo(id: String): TodoItem {
-        if (id == "") {
+        if (id == TodoItem.NEW_TODO_ID) {
             return TodoItem()
         }
 
@@ -62,7 +62,8 @@ class TodoRepository @Inject constructor(
     }
 
     suspend fun updateTodo(todoItem: TodoItem) {
-        val entity = databaseMapper.fromDomainTypeToEntityType(todoItem.copy(modified = LocalDateTime.now()))
+        val entity =
+            databaseMapper.fromDomainTypeToEntityType(todoItem.copy(modified = LocalDateTime.now()))
 
         planSync()
         localDataSource.save(entity)
@@ -132,7 +133,10 @@ class TodoRepository @Inject constructor(
         return todoDeletedEntity.deletedAt < entity.modified
     }
 
-    private fun handleMergeElement(currentDataBase: MutableMap<UUID, TodoEntity>, networkItem: TodoEntity) {
+    private fun handleMergeElement(
+        currentDataBase: MutableMap<UUID, TodoEntity>,
+        networkItem: TodoEntity
+    ) {
         if (currentDataBase.contains(networkItem.id)) {
             val databaseItem = currentDataBase[networkItem.id] ?: return
             if ((databaseItem.modified ?: 0) <= (networkItem.modified ?: 0)) {

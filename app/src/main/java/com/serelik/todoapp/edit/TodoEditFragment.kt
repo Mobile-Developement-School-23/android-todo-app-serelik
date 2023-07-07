@@ -37,7 +37,7 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
 
     private val supportFragmentManager by lazy { requireActivity().supportFragmentManager }
 
-    private val itemId by lazy { arguments?.getString(EDIT_ID_KEY) ?: "" }
+    private val itemId by lazy { arguments?.getString(EDIT_ID_KEY) ?: TodoItem.NEW_TODO_ID }
 
     private var dateSetListener =
         OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
@@ -71,7 +71,7 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
 
         viewModel.todoItemLiveData.observe(viewLifecycleOwner, ::bindTodo)
 
-        if (itemId != "-1") {
+        if (itemId != TodoItem.NEW_TODO_ID) {
             binding.textViewDelete.isEnabled = true
             binding.textViewDelete.setOnClickListener {
                 viewModel.remove()
