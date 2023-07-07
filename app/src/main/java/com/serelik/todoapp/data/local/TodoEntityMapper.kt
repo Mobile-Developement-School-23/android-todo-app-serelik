@@ -10,7 +10,6 @@ import javax.inject.Inject
 
 class TodoEntityMapper @Inject constructor() {
     fun fromEntityToTodoItem(entity: TodoEntity): TodoItem {
-
         return TodoItem(
             id = entity.id.toString(),
             created = entity.created.toLocalDateTime(),
@@ -23,7 +22,7 @@ class TodoEntityMapper @Inject constructor() {
         )
     }
 
-    //todo rename
+    // todo rename
     fun fromDomainTypeToEntityType(todoItem: TodoItem): TodoEntity {
         return TodoEntity(
             id = if (todoItem.id == "") UUID.randomUUID() else UUID.fromString(todoItem.id),

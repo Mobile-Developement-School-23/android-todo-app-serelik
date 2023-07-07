@@ -10,5 +10,5 @@ data class TodoItem(
     val deadline: LocalDate? = null,
     val isDone: Boolean = false,
     val created: LocalDateTime = LocalDateTime.now(),
-    val modified: LocalDateTime? = null,
+    val modified: LocalDateTime? = null
 )

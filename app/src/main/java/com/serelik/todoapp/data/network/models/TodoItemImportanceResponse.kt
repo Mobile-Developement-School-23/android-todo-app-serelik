@@ -7,8 +7,10 @@ import kotlinx.serialization.Serializable
 enum class TodoItemImportanceResponse {
     @SerialName("basic")
     NONE,
+
     @SerialName("low")
     LOW,
+
     @SerialName("important")
     HIGH
 }

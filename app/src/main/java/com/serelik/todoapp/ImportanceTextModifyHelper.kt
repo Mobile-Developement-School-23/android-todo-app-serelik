@@ -13,9 +13,11 @@ object ImportanceTextModifyHelper {
         context: Context
     ): SpannableString {
         val spannableText = SpannableString("  $text ")
-        val drawableRes = if (importance == TodoItemImportance.HIGH)
+        val drawableRes = if (importance == TodoItemImportance.HIGH) {
             R.drawable.ic_priority_high
-        else R.drawable.ic_priority_low
+        } else {
+            R.drawable.ic_priority_low
+        }
 
         spannableText.setSpan(
             ImageSpan(context, drawableRes),

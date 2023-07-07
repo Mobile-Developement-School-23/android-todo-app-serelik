@@ -24,7 +24,6 @@ class LocalDataSource @Inject constructor(private val mapper: TodoEntityMapper, 
 
     fun getAllDeletedTodos(): List<TodoDeletedEntity> = dataBase.todoDeletedDao().loadAllTodos()
 
-
     fun loadAllUnDoneTodos(): Flow<List<TodoItem>> =
         dataBase.todoDao().loadAllUnDoneTodos()
             .map { list -> list.map { mapper.fromEntityToTodoItem(entity = it) } }

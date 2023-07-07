@@ -16,5 +16,4 @@ interface TodoApiService {
         @Header("X-Last-Known-Revision") revision: Long,
         @Body body: TodoItemListBody
     ): TodoItemListResponse
-
 }

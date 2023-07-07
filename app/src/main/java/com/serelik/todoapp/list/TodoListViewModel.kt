@@ -5,17 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.work.ExistingWorkPolicy
-import androidx.work.WorkManager
-import com.serelik.todoapp.TodoApp
 import com.serelik.todoapp.data.local.repository.TodoRepository
-import com.serelik.todoapp.data.workers.WorkRepository
-import com.serelik.todoapp.edit.TodoEditViewModel
 import com.serelik.todoapp.model.TodoItem
 import com.serelik.todoapp.model.TodoListScreenModel
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -64,13 +56,11 @@ class TodoListViewModel @Inject constructor(private val repository: TodoReposito
         }
     }
 
-
     fun loadListFromServer() {
         viewModelScope.launch {
             try {
                 repository.synchronizeList()
             } catch (_: Throwable) {
-
             }
         }
     }
@@ -83,7 +73,5 @@ class TodoListViewModel @Inject constructor(private val repository: TodoReposito
             TodoListViewModel::class.java -> TodoListViewModel(repository)
             else -> throw IllegalArgumentException("$modelClass is not registered ViewModel")
         } as T
-
     }
-
 }

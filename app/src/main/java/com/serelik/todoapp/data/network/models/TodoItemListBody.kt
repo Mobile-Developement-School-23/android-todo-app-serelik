@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TodoItemListBody(
     @SerialName("list")
-    val todos: List<TodoItemResponse>,
+    val todos: List<TodoItemResponse>
 )

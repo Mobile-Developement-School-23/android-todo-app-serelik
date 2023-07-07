@@ -27,6 +27,7 @@ interface TodoEditFragmentComponent {
 @Module
 interface TodoEditViewModelModule {
     @Binds
-    @[IntoMap ViewModelKey(TodoEditViewModel::class)]
+    @IntoMap
+    @ViewModelKey(TodoEditViewModel::class)
     fun provideTodoListViewModel(todoEditViewModel: TodoEditViewModel): ViewModel
 }

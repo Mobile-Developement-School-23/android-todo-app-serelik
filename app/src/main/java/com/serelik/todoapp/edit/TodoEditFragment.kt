@@ -49,7 +49,6 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
 
         component = (requireActivity() as MainActivity)
@@ -85,7 +84,8 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
         val deadLine = viewModel.newDeadline ?: LocalDate.now()
 
         val dialog = DatePickerDialog(
-            requireContext(), dateSetListener,
+            requireContext(),
+            dateSetListener,
             deadLine.year,
             deadLine.monthValue,
             deadLine.dayOfMonth
@@ -95,7 +95,6 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
     }
 
     private fun bindTodo(todoItem: TodoItem) {
-
         binding.apply {
             editText.setText(todoItem.text)
             spinner.setSelection(todoItem.importance.ordinal)
@@ -104,7 +103,9 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
                 switchCompat.isChecked = true
                 textViewDeadlineDate.text = DateFormatterHelper.format(todoItem.deadline)
                 textViewDeadlineDate.isVisible = true
-            } else textViewDeadlineDate.isVisible = false
+            } else {
+                textViewDeadlineDate.isVisible = false
+            }
         }
     }
 
@@ -136,11 +137,12 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
 
     private fun setupSwitch() {
         binding.switchCompat.setOnCheckedChangeListener { switchView, isChecked ->
-            if (!switchView.isPressed)
+            if (!switchView.isPressed) {
                 return@setOnCheckedChangeListener
-            if (isChecked)
+            }
+            if (isChecked) {
                 showDatePicker()
-            else {
+            } else {
                 binding.textViewDeadlineDate.text = null
                 viewModel.newDeadline = null
                 binding.textViewDeadlineDate.isVisible = false
@@ -157,7 +159,7 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
             if (binding.editText.text.isNotBlank()) {
                 viewModel.save(
                     text = binding.editText.text.toString(),
-                    importance = TodoItemImportance.values()[binding.spinner.selectedItemPosition],
+                    importance = TodoItemImportance.values()[binding.spinner.selectedItemPosition]
                 )
                 supportFragmentManager.popBackStack()
             } else {

@@ -42,5 +42,4 @@ class TodoEditViewModel @Inject constructor(
             repository.removeTodo(todoItem.id)
         }
     }
-
 }

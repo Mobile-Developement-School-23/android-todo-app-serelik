@@ -42,5 +42,4 @@ interface TodoDao {
 
     @Query("UPDATE todo SET is_done = :isDone WHERE _id = :todoId")
     suspend fun changedStateDone(todoId: String, isDone: Boolean)
-
 }

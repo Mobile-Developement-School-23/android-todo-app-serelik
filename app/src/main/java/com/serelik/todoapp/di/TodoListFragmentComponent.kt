@@ -27,6 +27,7 @@ interface TodoListFragmentComponent {
 @Module
 interface TodoListViewModelModule {
     @Binds
-    @[IntoMap ViewModelKey(TodoListViewModel::class)]
+    @IntoMap
+    @ViewModelKey(TodoListViewModel::class)
     fun provideTodoListViewModel(todoListViewModel: TodoListViewModel): ViewModel
 }

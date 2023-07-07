@@ -22,19 +22,18 @@ class TodoItemViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: TodoItem) = with(binding) {
-
         root.setOnClickListener { onTodoClickListener(item.id) }
 
         checkbox.setOnCheckedChangeListener { checkBoxView, isChecked ->
-            if (!checkBoxView.isPressed)
+            if (!checkBoxView.isPressed) {
                 return@setOnCheckedChangeListener
+            }
             changeIsDoneListener(item, isChecked)
         }
 
         formatText(item)
         setupDeadline(item)
         setupCheckBox(item)
-
     }
 
     private fun formatText(item: TodoItem) {
@@ -42,7 +41,9 @@ class TodoItemViewHolder(
             item.isDone -> formatIsDoneText(item.text)
 
             item.importance != TodoItemImportance.NONE -> ImportanceTextModifyHelper.modifyText(
-                item.text, item.importance, itemView.context
+                item.text,
+                item.importance,
+                itemView.context
             )
 
             else -> item.text
@@ -52,7 +53,9 @@ class TodoItemViewHolder(
     private fun formatIsDoneText(text: String): SpannableString {
         val strikeThroughText = SpannableString(text)
         strikeThroughText.setSpan(
-            StrikethroughSpan(), 0, text.length,
+            StrikethroughSpan(),
+            0,
+            text.length,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         )
 
@@ -62,7 +65,10 @@ class TodoItemViewHolder(
         )
 
         strikeThroughText.setSpan(
-            ForegroundColorSpan(foregroundColor), 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            ForegroundColorSpan(foregroundColor),
+            0,
+            text.length,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         )
         return strikeThroughText
     }
@@ -71,16 +77,19 @@ class TodoItemViewHolder(
         if (item.deadline != null) {
             textViewDate.isVisible = true
             textViewDate.text = DateFormatterHelper.format(item.deadline)
-        } else textViewDate.isVisible = false
+        } else {
+            textViewDate.isVisible = false
+        }
     }
 
     private fun setupCheckBox(item: TodoItem) = with(binding) {
         checkbox.isChecked = item.isDone
         val buttonDrawableRes =
-            if (item.importance == TodoItemImportance.HIGH)
+            if (item.importance == TodoItemImportance.HIGH) {
                 R.drawable.selector_checkbox_high
-            else
+            } else {
                 R.drawable.selector_checkbox
+            }
 
         checkbox.setButtonIconDrawableResource(buttonDrawableRes)
     }

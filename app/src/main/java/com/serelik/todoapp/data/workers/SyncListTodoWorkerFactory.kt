@@ -7,7 +7,6 @@ import androidx.work.WorkerParameters
 import com.serelik.todoapp.data.local.repository.TodoRepository
 import javax.inject.Inject
 
-
 class SyncListTodoWorkerFactory @Inject constructor(private val repository: TodoRepository) :
     WorkerFactory() {
     override fun createWorker(
@@ -24,5 +23,4 @@ class SyncListTodoWorkerFactory @Inject constructor(private val repository: Todo
             else -> null
         }
     }
-
 }

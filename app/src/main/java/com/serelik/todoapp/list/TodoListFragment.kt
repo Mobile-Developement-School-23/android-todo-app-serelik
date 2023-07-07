@@ -40,7 +40,6 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
 
     lateinit var component: TodoListFragmentComponent
 
-
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
@@ -84,8 +83,6 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
                         }
 
                         LoadingStatus.Success -> viewBinding.swipeRefreshLayout.isRefreshing = false
-
-
                     }
                 }
             }
@@ -159,96 +156,95 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
             0,
             ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
         ) {
-            val rect = Rect().apply {
-                left = 0
-                right = width
-            }
-            val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+                val rect = Rect().apply {
+                    left = 0
+                    right = width
+                }
+                val paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ) = false
+                override fun onMove(
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    target: RecyclerView.ViewHolder
+                ) = false
 
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                if (viewHolder !is TodoItemViewHolder)
-                    return
+                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                    if (viewHolder !is TodoItemViewHolder) {
+                        return
+                    }
 
-                val pos = viewHolder.adapterPosition
-                val item = todoItemAdapter.getItemTodo(pos)
+                    val pos = viewHolder.adapterPosition
+                    val item = todoItemAdapter.getItemTodo(pos)
 
-
-                if (direction == ItemTouchHelper.LEFT) {
-                    viewModel.remove(item.id)
-                } else
-                    viewModel.changedStateDone(item, !item.isDone)
-
-            }
-
-            override fun onChildDraw(
-                canvas: Canvas,
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                dX: Float,
-                dY: Float,
-                actionState: Int,
-                isCurrentlyActive: Boolean
-            ) {
-                if (viewHolder !is TodoItemViewHolder)
-                    return
-
-                paint.color = when {
-                    dX < 0 -> deleteColor
-                    else -> checkedDoneColor
+                    if (direction == ItemTouchHelper.LEFT) {
+                        viewModel.remove(item.id)
+                    } else {
+                        viewModel.changedStateDone(item, !item.isDone)
+                    }
                 }
 
-                rect.apply {
-                    top = viewHolder.itemView.top
-                    bottom = viewHolder.itemView.bottom
-                }
+                override fun onChildDraw(
+                    canvas: Canvas,
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    dX: Float,
+                    dY: Float,
+                    actionState: Int,
+                    isCurrentlyActive: Boolean
+                ) {
+                    if (viewHolder !is TodoItemViewHolder) {
+                        return
+                    }
 
-                canvas.drawRect(rect, paint)
+                    paint.color = when {
+                        dX < 0 -> deleteColor
+                        else -> checkedDoneColor
+                    }
 
-                val iconMargin = resources.getDimension(R.dimen.DeleteDrawableMargin)
-                    .roundToInt()
-                val drawableHeight = swipeDeleteIcon?.intrinsicHeight ?: 0
-                val verticalPadding = (viewHolder.itemView.height - drawableHeight) / 2
-                if (swipeCheckedIcon != null) {
-                    swipeCheckedIcon.bounds = Rect(
-                        iconMargin,
-                        viewHolder.itemView.top + verticalPadding,
-                        iconMargin + swipeCheckedIcon.intrinsicWidth,
-                        viewHolder.itemView.top + swipeCheckedIcon.intrinsicHeight + verticalPadding
+                    rect.apply {
+                        top = viewHolder.itemView.top
+                        bottom = viewHolder.itemView.bottom
+                    }
+
+                    canvas.drawRect(rect, paint)
+
+                    val iconMargin = resources.getDimension(R.dimen.DeleteDrawableMargin)
+                        .roundToInt()
+                    val drawableHeight = swipeDeleteIcon?.intrinsicHeight ?: 0
+                    val verticalPadding = (viewHolder.itemView.height - drawableHeight) / 2
+                    if (swipeCheckedIcon != null) {
+                        swipeCheckedIcon.bounds = Rect(
+                            iconMargin,
+                            viewHolder.itemView.top + verticalPadding,
+                            iconMargin + swipeCheckedIcon.intrinsicWidth,
+                            viewHolder.itemView.top + swipeCheckedIcon.intrinsicHeight + verticalPadding
+                        )
+                    }
+                    if (swipeDeleteIcon != null) {
+                        swipeDeleteIcon.bounds = Rect(
+                            width - iconMargin * 2 - swipeDeleteIcon.intrinsicWidth,
+                            viewHolder.itemView.top + verticalPadding,
+                            width - iconMargin * 2,
+                            viewHolder.itemView.top + swipeDeleteIcon.intrinsicHeight +
+                                verticalPadding
+                        )
+                    }
+
+                    if (dX < 0) swipeDeleteIcon?.draw(canvas) else swipeCheckedIcon?.draw(canvas)
+
+                    super.onChildDraw(
+                        canvas,
+                        recyclerView,
+                        viewHolder,
+                        dX,
+                        dY,
+                        actionState,
+                        isCurrentlyActive
                     )
                 }
-                if (swipeDeleteIcon != null) {
-                    swipeDeleteIcon.bounds = Rect(
-                        width - iconMargin * 2 - swipeDeleteIcon.intrinsicWidth,
-                        viewHolder.itemView.top + verticalPadding,
-                        width - iconMargin * 2,
-                        viewHolder.itemView.top + swipeDeleteIcon.intrinsicHeight
-                                + verticalPadding
-                    )
-                }
-
-                if (dX < 0) swipeDeleteIcon?.draw(canvas) else swipeCheckedIcon?.draw(canvas)
-
-                super.onChildDraw(
-                    canvas,
-                    recyclerView,
-                    viewHolder,
-                    dX,
-                    dY,
-                    actionState,
-                    isCurrentlyActive
-                )
-            }
-
-        })
+            })
 
         swipeHelper.attachToRecyclerView(viewBinding.recyclerView)
-
     }
 
     private fun openAddFragment() {
@@ -256,14 +252,12 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
             .replace(android.R.id.content, TodoEditFragment())
             .addToBackStack("Todo add fragment")
             .commit()
-
     }
 
     private val Int.dp
         get() = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
-            toFloat(), resources.displayMetrics
+            toFloat(),
+            resources.displayMetrics
         ).roundToInt()
-
-
 }

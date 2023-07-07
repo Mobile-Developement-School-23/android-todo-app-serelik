@@ -30,10 +30,9 @@ data class TodoEntity(
     val created: Long,
 
     @ColumnInfo(name = DbContract.Todo.COLUMN_NAME_MODIFIED)
-    val modified: Long? = null,
+    val modified: Long? = null
 ) {
     companion object {
         const val DEFAULT_UUID = "00000000-0000-0000-0000-000000000000"
     }
 }
-

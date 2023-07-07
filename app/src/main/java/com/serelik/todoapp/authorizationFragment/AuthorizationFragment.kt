@@ -37,9 +37,10 @@ class AuthorizationFragment : Fragment(R.layout.fragment_authorization) {
 
     private val sdk: YandexAuthSdk by lazy {
         YandexAuthSdk(
-            requireContext(), YandexAuthOptions(
+            requireContext(),
+            YandexAuthOptions(
                 context = requireContext(),
-                loggingEnabled = true,
+                loggingEnabled = true
             )
         )
     }
@@ -55,7 +56,6 @@ class AuthorizationFragment : Fragment(R.layout.fragment_authorization) {
                         planUpdateList()
                         openListFragment()
                     }
-
                 } catch (e: Exception) {
                     Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT).show()
                 }
@@ -86,7 +86,6 @@ class AuthorizationFragment : Fragment(R.layout.fragment_authorization) {
             .replace(android.R.id.content, TodoListFragment())
             .commit()
     }
-
 
     private fun requestAuth() {
         val loginOptionsBuilder = YandexAuthLoginOptions

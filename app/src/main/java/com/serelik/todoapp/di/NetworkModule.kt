@@ -36,7 +36,7 @@ class NetworkModule {
     @Provides
     fun provideHttpClient(
         loggingInterceptor: HttpLoggingInterceptor,
-        tokenInterceptor: TokenInterceptor,
+        tokenInterceptor: TokenInterceptor
     ): OkHttpClient {
         return OkHttpClient
             .Builder()

@@ -19,11 +19,11 @@ class MainActivity : AppCompatActivity() {
         activityComponent = this.component.activityComponent().create()
 
         if (savedInstanceState == null) {
-
-            val fragment = if (tokenStorage.hasToken())
+            val fragment = if (tokenStorage.hasToken()) {
                 TodoListFragment()
-            else
+            } else {
                 AuthorizationFragment()
+            }
 
             supportFragmentManager
                 .beginTransaction()

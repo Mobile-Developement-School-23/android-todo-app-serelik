@@ -7,7 +7,8 @@ import javax.inject.Inject
 class TokenStorage @Inject constructor(context: Context) {
 
     private val sharedPref = context.getSharedPreferences(
-        SHARED_PREF_KEY, Context.MODE_PRIVATE
+        SHARED_PREF_KEY,
+        Context.MODE_PRIVATE
     )
 
     fun saveToken(token: String) {
@@ -29,5 +30,4 @@ class TokenStorage @Inject constructor(context: Context) {
         private const val TOKEN_KEY = "TOKEN_KEY"
         private const val SHARED_PREF_KEY = "SHARED_PREF_KEY_TOKEN"
     }
-
 }

@@ -24,9 +24,11 @@ interface ActivityComponent {
 }
 
 @Module(
-    subcomponents = [TodoListFragmentComponent::class,
+    subcomponents = [
+        TodoListFragmentComponent::class,
         TodoEditFragmentComponent::class,
-        AuthorizationFragmentComponent::class]
+        AuthorizationFragmentComponent::class
+    ]
 )
 interface ActivityModule {
     @Binds

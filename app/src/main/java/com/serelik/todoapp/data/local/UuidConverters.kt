@@ -6,9 +6,10 @@ import java.util.UUID
 
 class UuidConverters {
     @TypeConverter
-    fun fromUUID(uuid: UUID): String? {
-        if (uuid.toString() == TodoEntity.DEFAULT_UUID)
+    fun fromUUID(uuid: UUID): String {
+        if (uuid.toString() == TodoEntity.DEFAULT_UUID) {
             return UUID.randomUUID().toString()
+        }
 
         return uuid.toString()
     }
@@ -20,5 +21,4 @@ class UuidConverters {
         }
         return UUID.fromString(TodoEntity.DEFAULT_UUID)
     }
-
 }

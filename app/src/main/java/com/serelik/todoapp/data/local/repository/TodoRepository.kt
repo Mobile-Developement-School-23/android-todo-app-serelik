@@ -39,8 +39,9 @@ class TodoRepository @Inject constructor(
     val loadingFlow: StateFlow<LoadingStatus> = _loadingFlow
 
     suspend fun loadTodo(id: String): TodoItem {
-        if (id == "")
+        if (id == "") {
             return TodoItem()
+        }
 
         return localDataSource.getTodo(id)
     }
@@ -56,10 +57,8 @@ class TodoRepository @Inject constructor(
     }
 
     suspend fun removeTodo(id: String) {
-
         planSync()
         localDataSource.deleteById(id)
-
     }
 
     suspend fun updateTodo(todoItem: TodoItem) {
@@ -107,8 +106,9 @@ class TodoRepository @Inject constructor(
 
         val resultList = currentDataBase.values.toList().sortedBy { it.created }
 
-        if (resultList == todoFromNetworkList)
+        if (resultList == todoFromNetworkList) {
             return@withContext
+        }
 
         val networkResultList = TodoItemListBody(resultList.map { networkMapper.fromEntity(it) })
         val newResponse = todoApiService.sendToServer(revision, networkResultList)
@@ -126,8 +126,9 @@ class TodoRepository @Inject constructor(
 
     private fun check(entity: TodoEntity, deleteMap: Map<UUID, TodoDeletedEntity>): Boolean {
         val todoDeletedEntity = deleteMap[entity.id] ?: return true
-        if (entity.modified == null)
+        if (entity.modified == null) {
             return false
+        }
         return todoDeletedEntity.deletedAt < entity.modified
     }
 

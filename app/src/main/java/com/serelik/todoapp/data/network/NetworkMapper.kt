@@ -9,7 +9,6 @@ import javax.inject.Inject
 
 class NetworkMapper @Inject constructor() {
     fun fromEntity(entity: TodoEntity): TodoItemResponse {
-
         return TodoItemResponse(
             id = entity.id.toString(),
             created = entity.created,

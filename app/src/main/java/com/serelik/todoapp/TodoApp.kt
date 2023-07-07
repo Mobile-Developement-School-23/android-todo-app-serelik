@@ -16,7 +16,6 @@ class TodoApp : Application(), Configuration.Provider {
     @Inject
     lateinit var workerConfiguration: Configuration
 
-
     override fun onCreate() {
         super.onCreate()
         compoment = DaggerAppComponent.factory().create(applicationContext)
@@ -27,7 +26,6 @@ class TodoApp : Application(), Configuration.Provider {
     override fun getWorkManagerConfiguration(): Configuration {
         return workerConfiguration
     }
-
 }
 
 val Context.component: AppComponent

@@ -14,6 +14,5 @@ data class TodoDeletedEntity(
     val id: UUID,
 
     @ColumnInfo(name = DbContract.DeletedTodo.COLUMN_NAME_DELETED_AT)
-    val deletedAt: Long,
+    val deletedAt: Long
 )
-
