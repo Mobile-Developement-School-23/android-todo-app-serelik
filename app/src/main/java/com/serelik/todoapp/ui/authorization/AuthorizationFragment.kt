@@ -1,4 +1,4 @@
-package com.serelik.todoapp.authorizationFragment
+package com.serelik.todoapp.ui.authorization
 
 import android.app.Activity
 import android.os.Bundle
@@ -9,14 +9,14 @@ import androidx.fragment.app.Fragment
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.WorkManager
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.serelik.todoapp.MainActivity
 import com.serelik.todoapp.R
 import com.serelik.todoapp.data.local.TokenStorage
 import com.serelik.todoapp.data.workers.SyncListTodoWorker
 import com.serelik.todoapp.data.workers.WorkRepository
 import com.serelik.todoapp.databinding.FragmentAuthorizationBinding
 import com.serelik.todoapp.di.AuthorizationFragmentComponent
-import com.serelik.todoapp.list.TodoListFragment
+import com.serelik.todoapp.ui.MainActivity
+import com.serelik.todoapp.ui.list.TodoListFragment
 import com.yandex.authsdk.YandexAuthLoginOptions
 import com.yandex.authsdk.YandexAuthOptions
 import com.yandex.authsdk.YandexAuthSdk

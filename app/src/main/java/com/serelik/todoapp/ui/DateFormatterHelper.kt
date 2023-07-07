@@ -1,4 +1,4 @@
-package com.serelik.todoapp
+package com.serelik.todoapp.ui
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

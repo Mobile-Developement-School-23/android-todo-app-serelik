@@ -1,8 +1,8 @@
 package com.serelik.todoapp.di
 
 import androidx.lifecycle.ViewModel
-import com.serelik.todoapp.list.TodoListFragment
-import com.serelik.todoapp.list.TodoListViewModel
+import com.serelik.todoapp.ui.list.TodoListFragment
+import com.serelik.todoapp.ui.list.TodoListViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.Subcomponent

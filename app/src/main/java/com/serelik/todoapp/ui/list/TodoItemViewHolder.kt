@@ -1,4 +1,4 @@
-package com.serelik.todoapp.list
+package com.serelik.todoapp.ui.list
 
 import android.text.SpannableString
 import android.text.Spanned
@@ -7,12 +7,12 @@ import android.text.style.StrikethroughSpan
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.serelik.todoapp.DateFormatterHelper
-import com.serelik.todoapp.ImportanceTextModifyHelper
 import com.serelik.todoapp.R
 import com.serelik.todoapp.databinding.ItemTodoBinding
 import com.serelik.todoapp.model.TodoItem
 import com.serelik.todoapp.model.TodoItemImportance
+import com.serelik.todoapp.ui.DateFormatterHelper
+import com.serelik.todoapp.ui.ImportanceTextModifyHelper
 
 class TodoItemViewHolder(
     private val binding: ItemTodoBinding,

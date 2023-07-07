@@ -1,4 +1,4 @@
-package com.serelik.todoapp.list
+package com.serelik.todoapp.ui.list
 
 import android.content.Context
 import android.graphics.Canvas
@@ -13,11 +13,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.serelik.todoapp.R
 import kotlin.math.roundToInt
 
-class SwipeHelperCallback(val context: Context, val onSwipeTodo: OnSwipeTodo) :
-    ItemTouchHelper.SimpleCallback(
-        0,
-        ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
-    ) {
+class SwipeHelperCallback(
+    context: Context,
+    private val onSwipeTodo: OnSwipeTodo
+) : ItemTouchHelper.SimpleCallback(
+    0,
+    ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+) {
     private val resources = context.resources
     private val displayMetrics: DisplayMetrics = resources.displayMetrics
     private val width = (displayMetrics.widthPixels / displayMetrics.density).toInt().dp
@@ -32,11 +34,11 @@ class SwipeHelperCallback(val context: Context, val onSwipeTodo: OnSwipeTodo) :
 
     private val iconMargin = resources.getDimensionPixelOffset(R.dimen.DeleteDrawableMargin)
 
-
     private val rect = Rect().apply {
         left = 0
         right = width
     }
+
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
     override fun onMove(
@@ -114,11 +116,11 @@ class SwipeHelperCallback(val context: Context, val onSwipeTodo: OnSwipeTodo) :
             viewHolder.itemView.top + verticalPadding,
             width - iconMargin * 2,
             viewHolder.itemView.top + swipeDeleteIcon.intrinsicHeight +
-                    verticalPadding
+                verticalPadding
         )
     }
 
-    fun drawBackground(dX: Float, viewHolder: RecyclerView.ViewHolder, canvas: Canvas) {
+    private fun drawBackground(dX: Float, viewHolder: RecyclerView.ViewHolder, canvas: Canvas) {
         paint.color = when {
             dX < 0 -> deleteColor
             else -> checkedDoneColor
@@ -143,5 +145,4 @@ class SwipeHelperCallback(val context: Context, val onSwipeTodo: OnSwipeTodo) :
 interface OnSwipeTodo {
     fun onSwipeDone(position: Int)
     fun onSwipeDelete(position: Int)
-
 }

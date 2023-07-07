@@ -13,15 +13,12 @@ import com.serelik.todoapp.data.network.models.TodoItemListBody
 import com.serelik.todoapp.data.workers.SyncListTodoWorker
 import com.serelik.todoapp.data.workers.WorkRepository
 import com.serelik.todoapp.di.AppScope
-import com.serelik.todoapp.list.LoadingStatus
 import com.serelik.todoapp.model.NewTodo
 import com.serelik.todoapp.model.TodoItem
 import com.serelik.todoapp.model.TodoListScreenModel
 import com.serelik.todoapp.model.TodoUiBaseItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime

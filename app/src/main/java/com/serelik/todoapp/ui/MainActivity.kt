@@ -1,11 +1,12 @@
-package com.serelik.todoapp
+package com.serelik.todoapp.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.serelik.todoapp.authorizationFragment.AuthorizationFragment
+import com.serelik.todoapp.component
 import com.serelik.todoapp.data.local.TokenStorage
 import com.serelik.todoapp.di.ActivityComponent
-import com.serelik.todoapp.list.TodoListFragment
+import com.serelik.todoapp.ui.authorization.AuthorizationFragment
+import com.serelik.todoapp.ui.list.TodoListFragment
 
 class MainActivity : AppCompatActivity() {
     private val tokenStorage by lazy { TokenStorage(this) }

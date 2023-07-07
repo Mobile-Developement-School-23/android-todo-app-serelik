@@ -1,9 +1,10 @@
-package com.serelik.todoapp
+package com.serelik.todoapp.ui
 
 import android.content.Context
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ImageSpan
+import com.serelik.todoapp.R
 import com.serelik.todoapp.model.TodoItemImportance
 
 object ImportanceTextModifyHelper {

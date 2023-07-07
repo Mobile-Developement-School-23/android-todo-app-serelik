@@ -1,4 +1,4 @@
-package com.serelik.todoapp.list
+package com.serelik.todoapp.ui.list
 
 import androidx.recyclerview.widget.RecyclerView
 import com.serelik.todoapp.databinding.ItemNewTodoBinding

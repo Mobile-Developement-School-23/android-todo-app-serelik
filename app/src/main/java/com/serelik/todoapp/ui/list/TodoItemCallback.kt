@@ -1,4 +1,4 @@
-package com.serelik.todoapp.list
+package com.serelik.todoapp.ui.list
 
 import androidx.recyclerview.widget.DiffUtil
 import com.serelik.todoapp.model.NewTodo

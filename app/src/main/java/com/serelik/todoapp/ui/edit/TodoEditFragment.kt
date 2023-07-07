@@ -1,4 +1,4 @@
-package com.serelik.todoapp.edit
+package com.serelik.todoapp.ui.edit
 
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
@@ -11,20 +11,20 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.serelik.todoapp.DateFormatterHelper
-import com.serelik.todoapp.ImportanceTextModifyHelper
-import com.serelik.todoapp.MainActivity
 import com.serelik.todoapp.R
 import com.serelik.todoapp.databinding.FragmentTodoEditBinding
 import com.serelik.todoapp.di.TodoEditFragmentComponent
 import com.serelik.todoapp.model.TodoItem
 import com.serelik.todoapp.model.TodoItemImportance
+import com.serelik.todoapp.ui.DateFormatterHelper
+import com.serelik.todoapp.ui.ImportanceTextModifyHelper
+import com.serelik.todoapp.ui.MainActivity
 import java.time.LocalDate
 import javax.inject.Inject
 
 class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
 
-    private val viewModel: TodoEditViewModel by viewModels() {
+    private val viewModel: TodoEditViewModel by viewModels {
         viewModelFactory
     }
 
@@ -131,7 +131,6 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
         )
 
         spinnerAdapter.setDropDownViewResource(R.layout.item_spinner_dropped)
-
         binding.spinner.adapter = spinnerAdapter
     }
 

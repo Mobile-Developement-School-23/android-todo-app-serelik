@@ -1,4 +1,4 @@
-package com.serelik.todoapp.list
+package com.serelik.todoapp.ui.list
 
 import android.os.Bundle
 import android.view.MenuItem
@@ -9,13 +9,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.serelik.todoapp.MainActivity
 import com.serelik.todoapp.R
 import com.serelik.todoapp.databinding.FragmentTodoListBinding
 import com.serelik.todoapp.di.TodoListFragmentComponent
-import com.serelik.todoapp.edit.TodoEditFragment
+import com.serelik.todoapp.model.TodoListScreenModel
+import com.serelik.todoapp.ui.MainActivity
+import com.serelik.todoapp.ui.edit.TodoEditFragment
 import java.io.IOException
 import javax.inject.Inject
 
@@ -69,31 +69,11 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.todoListScreenModel.observe(viewLifecycleOwner) { model ->
-            todoItemAdapter.submitList(model.items)
-            updateVisibilityTodoDoneItemsStatus(model.isDoneVisible)
-            viewBinding.textViewDoneCount.text =
-                getString(R.string.is_done_count, model.doneCount)
-            viewBinding.textViewDoneCount.isInvisible = !model.isDoneVisible
-        }
+        viewModel.todoListScreenModel.observe(viewLifecycleOwner, ::bindScreenModel)
+        viewModel.loadingState.observe(viewLifecycleOwner, ::bindStatus)
 
-        viewModel.loadingState.observe(viewLifecycleOwner) { status ->
-            when (status) {
-                is LoadingStatus.Error -> showError(status.throwable)
-                LoadingStatus.Loading -> {
-                    viewBinding.swipeRefreshLayout.isRefreshing = true
-                }
-
-                LoadingStatus.Success -> viewBinding.swipeRefreshLayout.isRefreshing = false
-            }
-        }
-
-
-        val recyclerView = viewBinding.recyclerView
-
-        recyclerView.layoutManager = LinearLayoutManager(context)
-
-        recyclerView.adapter = todoItemAdapter
+        viewBinding.recyclerView.adapter = todoItemAdapter
+        setupSwipeFunctionality()
 
         getVisibilityTodoItemButton()?.setOnMenuItemClickListener {
             viewModel.changeDoneVisibility()
@@ -106,7 +86,6 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
         viewBinding.swipeRefreshLayout.setOnRefreshListener {
             viewModel.loadListFromServer()
         }
-        swipeFunctionality()
     }
 
     private fun getVisibilityTodoItemButton(): MenuItem? {
@@ -125,14 +104,11 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
     private fun openEditFragment(id: String) {
         supportFragmentManager.beginTransaction()
             .replace(android.R.id.content, TodoEditFragment.createFragment(id))
-            .addToBackStack("Edit_id_Key")
+            .addToBackStack(EDIT_ID_KEY)
             .commit()
     }
 
-
-    private fun swipeFunctionality() {
-
-
+    private fun setupSwipeFunctionality() {
         val swipeHelperCallback = SwipeHelperCallback(requireContext(), onSwipeTodo)
         val swipeHelper = ItemTouchHelper(swipeHelperCallback)
         swipeHelper.attachToRecyclerView(viewBinding.recyclerView)
@@ -141,15 +117,16 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
     private fun openAddFragment() {
         supportFragmentManager.beginTransaction()
             .replace(android.R.id.content, TodoEditFragment())
-            .addToBackStack("Todo add fragment")
+            .addToBackStack(TODO_ADD_FRAGMENT)
             .commit()
     }
 
     private fun showError(throwable: Throwable) {
-        val message = if (throwable is IOException)
+        val message = if (throwable is IOException) {
             getString(R.string.no_internet_message)
-        else
+        } else {
             getString(R.string.something_gone_wrong_message)
+        }
 
         Toast.makeText(
             requireContext(),
@@ -159,5 +136,27 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
         viewBinding.swipeRefreshLayout.isRefreshing = false
     }
 
+    private fun bindStatus(status: LoadingStatus) {
+        when (status) {
+            is LoadingStatus.Error -> showError(status.throwable)
+            LoadingStatus.Loading -> {
+                viewBinding.swipeRefreshLayout.isRefreshing = true
+            }
 
+            LoadingStatus.Success -> viewBinding.swipeRefreshLayout.isRefreshing = false
+        }
+    }
+
+    private fun bindScreenModel(model: TodoListScreenModel) {
+        todoItemAdapter.submitList(model.items)
+        updateVisibilityTodoDoneItemsStatus(model.isDoneVisible)
+        viewBinding.textViewDoneCount.text =
+            getString(R.string.is_done_count, model.doneCount)
+        viewBinding.textViewDoneCount.isInvisible = !model.isDoneVisible
+    }
+
+    companion object {
+        const val EDIT_ID_KEY = "Edit_id_Key"
+        const val TODO_ADD_FRAGMENT = "todo_add_fragment"
+    }
 }

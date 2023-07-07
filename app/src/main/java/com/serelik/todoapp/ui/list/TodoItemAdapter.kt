@@ -1,4 +1,4 @@
-package com.serelik.todoapp.list
+package com.serelik.todoapp.ui.list
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

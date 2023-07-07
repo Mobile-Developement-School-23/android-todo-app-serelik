@@ -1,8 +1,8 @@
 package com.serelik.todoapp.di
 
 import androidx.lifecycle.ViewModel
-import com.serelik.todoapp.edit.TodoEditFragment
-import com.serelik.todoapp.edit.TodoEditViewModel
+import com.serelik.todoapp.ui.edit.TodoEditFragment
+import com.serelik.todoapp.ui.edit.TodoEditViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.Subcomponent

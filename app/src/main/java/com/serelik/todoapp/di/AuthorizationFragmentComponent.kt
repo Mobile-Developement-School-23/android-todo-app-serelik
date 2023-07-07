@@ -1,6 +1,6 @@
 package com.serelik.todoapp.di
 
-import com.serelik.todoapp.authorizationFragment.AuthorizationFragment
+import com.serelik.todoapp.ui.authorization.AuthorizationFragment
 import dagger.Subcomponent
 import javax.inject.Scope
 
