@@ -17,7 +17,7 @@ class LocalDataSource @Inject constructor(private val mapper: TodoEntityMapper, 
 
     fun getAllTodosFlow(): Flow<List<TodoItem>> =
         dataBase.todoDao().loadAllTodosFlow().map { list ->
-            list.map { mapper.fromEntity(entity = it) }
+            list.map { mapper.fromEntityToTodoItem(entity = it) }
         }
 
     fun getAllTodos(): List<TodoEntity> = dataBase.todoDao().loadAllTodos()
@@ -27,7 +27,7 @@ class LocalDataSource @Inject constructor(private val mapper: TodoEntityMapper, 
 
     fun loadAllUnDoneTodos(): Flow<List<TodoItem>> =
         dataBase.todoDao().loadAllUnDoneTodos()
-            .map { list -> list.map { mapper.fromEntity(entity = it) } }
+            .map { list -> list.map { mapper.fromEntityToTodoItem(entity = it) } }
 
     suspend fun deleteById(id: String) {
         dataBase.todoDao().deleteById(id)
@@ -45,13 +45,7 @@ class LocalDataSource @Inject constructor(private val mapper: TodoEntityMapper, 
         dataBase.todoDao().changedStateDone(todoId, isDone)
 
     suspend fun getTodo(todoId: String): TodoItem =
-        mapper.fromEntity(dataBase.todoDao().loadById(todoId))
-
-    suspend fun deleteAllTodo() = dataBase.todoDao().deleteAll()
+        mapper.fromEntityToTodoItem(dataBase.todoDao().loadById(todoId))
 
     suspend fun replaceAllTodo(todos: List<TodoEntity>) = dataBase.todoDao().replaceAll(todos)
-
-    suspend fun saveAll(newTodoList: List<TodoEntity>) = dataBase.todoDao().insertAll(newTodoList)
-
-
 }

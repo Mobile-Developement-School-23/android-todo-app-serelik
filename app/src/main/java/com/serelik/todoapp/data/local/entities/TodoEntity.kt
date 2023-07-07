@@ -10,7 +10,7 @@ import java.util.UUID
     tableName = DbContract.Todo.TABLE_NAME
 )
 data class TodoEntity(
-    @PrimaryKey()
+    @PrimaryKey
     @ColumnInfo(name = DbContract.Todo.COLUMN_NAME_ID)
     val id: UUID = UUID.fromString(DEFAULT_UUID),
 

@@ -30,8 +30,8 @@ class TodoApp : Application(), Configuration.Provider {
 
 }
 
-val Context.compoment: AppComponent
+val Context.component: AppComponent
     get() = when (this) {
         is TodoApp -> compoment
-        else -> this.applicationContext.compoment
+        else -> this.applicationContext.component
     }

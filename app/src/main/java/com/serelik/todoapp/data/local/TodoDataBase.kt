@@ -8,7 +8,6 @@ import androidx.room.TypeConverters
 import com.serelik.todoapp.data.local.entities.DbContract
 import com.serelik.todoapp.data.local.entities.TodoDeletedEntity
 import com.serelik.todoapp.data.local.entities.TodoEntity
-import java.lang.Exception
 
 @Database(entities = [TodoEntity::class, TodoDeletedEntity::class], version = 2)
 @TypeConverters(UuidConverters::class)

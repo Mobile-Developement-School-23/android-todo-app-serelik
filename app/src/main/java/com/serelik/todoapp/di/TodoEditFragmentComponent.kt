@@ -29,5 +29,4 @@ interface TodoEditViewModelModule {
     @Binds
     @[IntoMap ViewModelKey(TodoEditViewModel::class)]
     fun provideTodoListViewModel(todoEditViewModel: TodoEditViewModel): ViewModel
-
 }

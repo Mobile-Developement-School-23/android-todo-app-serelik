@@ -23,53 +23,59 @@ class TodoItemViewHolder(
 
     fun bind(item: TodoItem) = with(binding) {
 
-        root.setOnClickListener {
-            onTodoClickListener(item.id)
-        }
+        root.setOnClickListener { onTodoClickListener(item.id) }
 
         checkbox.setOnCheckedChangeListener { checkBoxView, isChecked ->
             if (!checkBoxView.isPressed)
                 return@setOnCheckedChangeListener
             changeIsDoneListener(item, isChecked)
-
         }
 
-        textViewTodo.text =
-            when {
-                item.isDone -> {
-                    val strikeThroughText = SpannableString(item.text)
-                    strikeThroughText.setSpan(
-                        StrikethroughSpan(),
-                        0,
-                        item.text.length,
-                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
+        formatText(item)
+        setupDeadline(item)
+        setupCheckBox(item)
 
-                    strikeThroughText.setSpan(
-                        ForegroundColorSpan(
-                            ContextCompat.getColor(
-                                itemView.context,
-                                R.color.label_tertiary
-                            )
-                        ), 0, item.text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
-                    strikeThroughText
-                }
+    }
 
-                item.importance != TodoItemImportance.NONE -> ImportanceTextModifyHelper.modifyText(
-                    item.text, item.importance, itemView.context
-                )
+    private fun formatText(item: TodoItem) {
+        binding.textViewTodo.text = when {
+            item.isDone -> formatIsDoneText(item.text)
 
-                else -> item.text
-            }
+            item.importance != TodoItemImportance.NONE -> ImportanceTextModifyHelper.modifyText(
+                item.text, item.importance, itemView.context
+            )
 
+            else -> item.text
+        }
+    }
+
+    private fun formatIsDoneText(text: String): SpannableString {
+        val strikeThroughText = SpannableString(text)
+        strikeThroughText.setSpan(
+            StrikethroughSpan(), 0, text.length,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        val foregroundColor = ContextCompat.getColor(
+            itemView.context,
+            R.color.label_tertiary
+        )
+
+        strikeThroughText.setSpan(
+            ForegroundColorSpan(foregroundColor), 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        return strikeThroughText
+    }
+
+    private fun setupDeadline(item: TodoItem) = with(binding) {
         if (item.deadline != null) {
             textViewDate.isVisible = true
-            textViewDate.text =
-                DateFormatterHelper.format(item.deadline)
+            textViewDate.text = DateFormatterHelper.format(item.deadline)
         } else textViewDate.isVisible = false
-        checkbox.isChecked = item.isDone
+    }
 
+    private fun setupCheckBox(item: TodoItem) = with(binding) {
+        checkbox.isChecked = item.isDone
         val buttonDrawableRes =
             if (item.importance == TodoItemImportance.HIGH)
                 R.drawable.selector_checkbox_high

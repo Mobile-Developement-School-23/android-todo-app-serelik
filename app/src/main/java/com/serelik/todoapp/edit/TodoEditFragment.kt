@@ -2,14 +2,12 @@ package com.serelik.todoapp.edit
 
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
-import android.content.Context
 import android.os.Bundle
 import android.text.SpannableString
 import android.view.View
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.createViewModelLazy
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -17,17 +15,12 @@ import com.serelik.todoapp.DateFormatterHelper
 import com.serelik.todoapp.ImportanceTextModifyHelper
 import com.serelik.todoapp.MainActivity
 import com.serelik.todoapp.R
-import com.serelik.todoapp.compoment
 import com.serelik.todoapp.databinding.FragmentTodoEditBinding
-import com.serelik.todoapp.di.MultiViewModelFactory
 import com.serelik.todoapp.di.TodoEditFragmentComponent
-import com.serelik.todoapp.di.TodoListFragmentComponent
 import com.serelik.todoapp.model.TodoItem
 import com.serelik.todoapp.model.TodoItemImportance
-import dagger.Lazy
 import java.time.LocalDate
 import javax.inject.Inject
-import javax.inject.Provider
 
 class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
 
@@ -53,7 +46,6 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
             val deadline = LocalDate.of(year, monthOfYear, dayOfMonth)
             viewModel.newDeadline = deadline
             binding.textViewDeadlineDate.text = DateFormatterHelper.format(deadline)
-
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {

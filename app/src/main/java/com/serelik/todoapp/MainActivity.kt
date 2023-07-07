@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        activityComponent = this.compoment.activityComponent().create()
+        activityComponent = this.component.activityComponent().create()
 
         if (savedInstanceState == null) {
 

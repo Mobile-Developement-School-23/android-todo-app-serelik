@@ -9,7 +9,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 class TodoEntityMapper @Inject constructor() {
-    fun fromEntity(entity: TodoEntity): TodoItem {
+    fun fromEntityToTodoItem(entity: TodoEntity): TodoItem {
 
         return TodoItem(
             id = entity.id.toString(),
@@ -24,7 +24,7 @@ class TodoEntityMapper @Inject constructor() {
     }
 
     //todo rename
-    fun fromDomain(todoItem: TodoItem): TodoEntity {
+    fun fromDomainTypeToEntityType(todoItem: TodoItem): TodoEntity {
         return TodoEntity(
             id = if (todoItem.id == "") UUID.randomUUID() else UUID.fromString(todoItem.id),
             created = todoItem.created.toMillis(),

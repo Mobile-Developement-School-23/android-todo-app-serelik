@@ -1,6 +1,8 @@
-package com.serelik.todoapp.data.network
+package com.serelik.todoapp.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.serelik.todoapp.data.network.TodoApiService
+import com.serelik.todoapp.data.network.TokenInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.Reusable
@@ -11,7 +13,6 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.create
-import javax.inject.Singleton
 
 @Module
 class NetworkModule {
@@ -36,13 +37,10 @@ class NetworkModule {
     fun provideHttpClient(
         loggingInterceptor: HttpLoggingInterceptor,
         tokenInterceptor: TokenInterceptor,
-        revisionInterceptor: RevisionInterceptor
     ): OkHttpClient {
         return OkHttpClient
             .Builder()
-            .addNetworkInterceptor(WrongRevisionInterceptor())
             .addInterceptor(tokenInterceptor)
-            .addInterceptor(revisionInterceptor)
             .addInterceptor(loggingInterceptor)
             .addNetworkInterceptor(loggingInterceptor)
             .build()
@@ -51,7 +49,6 @@ class NetworkModule {
     @Provides
     fun provideContentType(): MediaType {
         return "application/json".toMediaType()
-
     }
 
     @Provides

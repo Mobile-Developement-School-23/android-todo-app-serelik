@@ -20,7 +20,6 @@ class TodoEditViewModel @Inject constructor(
     private val _todoItemLiveData: MutableLiveData<TodoItem> = MutableLiveData()
     val todoItemLiveData: LiveData<TodoItem> = _todoItemLiveData
 
-
     fun loadTodoItem(id: String) {
         viewModelScope.launch {
             val todoItem = repository.loadTodo(id)

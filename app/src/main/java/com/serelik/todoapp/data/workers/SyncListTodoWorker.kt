@@ -15,7 +15,6 @@ class SyncListTodoWorker(
     workerParams
 ) {
 
-
     override suspend fun doWork(): Result {
         return try {
             repository.synchronizeList()
@@ -23,8 +22,12 @@ class SyncListTodoWorker(
             Result.success()
         } catch (error: Throwable) {
             error.printStackTrace()
-            Log.e("Worker check", error.message.toString())
             Result.retry()
         }
+    }
+
+    companion object {
+        const val ONE_TIME_TAG = "one_time_tag"
+        const val PERIODICAL_TAG = "upload_from_server_periodical"
     }
 }

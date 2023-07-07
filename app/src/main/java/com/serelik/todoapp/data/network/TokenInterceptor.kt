@@ -1,6 +1,5 @@
 package com.serelik.todoapp.data.network
 
-import com.serelik.todoapp.TodoApp
 import com.serelik.todoapp.data.local.TokenStorage
 import okhttp3.Interceptor
 import okhttp3.Response
