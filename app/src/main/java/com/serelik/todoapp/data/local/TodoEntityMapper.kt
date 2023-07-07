@@ -22,12 +22,15 @@ class TodoEntityMapper @Inject constructor() {
         )
     }
 
-    // todo rename
     fun fromDomainTypeToEntityType(todoItem: TodoItem): TodoEntity {
         return TodoEntity(
-            id = if (todoItem.id == TodoItem.NEW_TODO_ID) UUID.randomUUID() else UUID.fromString(
-                todoItem.id
-            ),
+            id = if (todoItem.id == TodoItem.NEW_TODO_ID) {
+                UUID.randomUUID()
+            } else {
+                UUID.fromString(
+                    todoItem.id
+                )
+            },
             created = todoItem.created.toMillis(),
             text = todoItem.text,
             importance = todoItem.importance,
