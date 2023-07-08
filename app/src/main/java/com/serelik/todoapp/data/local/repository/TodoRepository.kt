@@ -22,7 +22,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
-import java.util.UUID
 import javax.inject.Inject
 
 @AppScope
@@ -83,7 +82,7 @@ class TodoRepository @Inject constructor(
     suspend fun synchronizeList() = withContext(Dispatchers.IO) {
         val response = todoApiService.getListTodos()
         val revision = response.revision
-        val todoFromNetworkList = response.todos.map { NetworkMapper().fromNetwork(it) }
+        val todoFromNetworkList = response.todos.map { NetworkMapper().fromResponseToEntityType(it) }
         val deletedMap = localDataSource.getAllDeletedTodos().associateBy { it.id }
         val mergedListWithDeleted = todoFromNetworkList.filter { check(it, deletedMap) }
         val currentDataBase = localDataSource.getAllTodos().associateBy { it.id }.toMutableMap()
@@ -98,9 +97,9 @@ class TodoRepository @Inject constructor(
             return@withContext
         }
 
-        val networkResultList = TodoItemListBody(resultList.map { networkMapper.fromEntity(it) })
+        val networkResultList = TodoItemListBody(resultList.map { networkMapper.fromEntityToResponseType(it) })
         val newResponse = todoApiService.sendToServer(revision, networkResultList)
-        localDataSource.replaceAllTodo(newResponse.todos.map { networkMapper.fromNetwork(it) })
+        localDataSource.replaceAllTodo(newResponse.todos.map { networkMapper.fromResponseToEntityType(it) })
     }
 
     private fun planSync() {
@@ -112,7 +111,7 @@ class TodoRepository @Inject constructor(
             )
     }
 
-    private fun check(entity: TodoEntity, deleteMap: Map<UUID, TodoDeletedEntity>): Boolean {
+    private fun check(entity: TodoEntity, deleteMap: Map<String, TodoDeletedEntity>): Boolean {
         val todoDeletedEntity = deleteMap[entity.id] ?: return true
         if (entity.modified == null) {
             return false
@@ -121,7 +120,7 @@ class TodoRepository @Inject constructor(
     }
 
     private fun handleMergeElement(
-        currentDataBase: MutableMap<UUID, TodoEntity>,
+        currentDataBase: MutableMap<String, TodoEntity>,
         networkItem: TodoEntity
     ) {
         if (currentDataBase.contains(networkItem.id)) {

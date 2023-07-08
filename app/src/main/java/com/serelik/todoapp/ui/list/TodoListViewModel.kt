@@ -66,6 +66,7 @@ class TodoListViewModel @Inject constructor(
                 repository.synchronizeList()
                 _loadingState.postValue(LoadingStatus.Success)
             } catch (e: Throwable) {
+                e.printStackTrace()
                 _loadingState.postValue(LoadingStatus.Error(e))
             }
         }

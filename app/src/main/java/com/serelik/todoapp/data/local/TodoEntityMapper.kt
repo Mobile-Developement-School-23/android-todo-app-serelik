@@ -11,7 +11,7 @@ import javax.inject.Inject
 class TodoEntityMapper @Inject constructor() {
     fun fromEntityToTodoItem(entity: TodoEntity): TodoItem {
         return TodoItem(
-            id = entity.id.toString(),
+            id = entity.id,
             created = entity.created.toLocalDateTime(),
             text = entity.text,
             importance = entity.importance,
@@ -25,11 +25,9 @@ class TodoEntityMapper @Inject constructor() {
     fun fromDomainTypeToEntityType(todoItem: TodoItem): TodoEntity {
         return TodoEntity(
             id = if (todoItem.id == TodoItem.NEW_TODO_ID) {
-                UUID.randomUUID()
+                UUID.randomUUID().toString()
             } else {
-                UUID.fromString(
-                    todoItem.id
-                )
+                todoItem.id
             },
             created = todoItem.created.toMillis(),
             text = todoItem.text,

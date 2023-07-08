@@ -32,7 +32,7 @@ class LocalDataSource @Inject constructor(private val mapper: TodoEntityMapper, 
         dataBase.todoDao().deleteById(id)
 
         val todoDeleteEntity = TodoDeletedEntity(
-            UUID.fromString(id),
+            UUID.fromString(id).toString(),
             LocalDateTime.now().toMillis()
         )
         dataBase.todoDeletedDao().insert(todoDeleteEntity)
