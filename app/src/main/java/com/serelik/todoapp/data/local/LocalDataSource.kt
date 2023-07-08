@@ -8,7 +8,6 @@ import com.serelik.todoapp.model.TodoItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.LocalDateTime
-import java.util.UUID
 import javax.inject.Inject
 
 class LocalDataSource @Inject constructor(private val mapper: TodoEntityMapper, context: Context) {
@@ -32,7 +31,7 @@ class LocalDataSource @Inject constructor(private val mapper: TodoEntityMapper, 
         dataBase.todoDao().deleteById(id)
 
         val todoDeleteEntity = TodoDeletedEntity(
-            UUID.fromString(id).toString(),
+            id,
             LocalDateTime.now().toMillis()
         )
         dataBase.todoDeletedDao().insert(todoDeleteEntity)
