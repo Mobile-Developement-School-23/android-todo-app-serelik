@@ -40,6 +40,6 @@ interface TodoDao {
         insertAll(todos)
     }
 
-    @Query("UPDATE todo SET is_done = :isDone WHERE _id = :todoId")
-    suspend fun changedStateDone(todoId: String, isDone: Boolean)
+    @Query("UPDATE todo SET is_done = :isDone, modified = :modified  WHERE _id = :todoId")
+    suspend fun changedStateDone(todoId: String, isDone: Boolean, modified: Long)
 }

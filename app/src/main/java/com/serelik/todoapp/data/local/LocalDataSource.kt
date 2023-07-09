@@ -40,7 +40,7 @@ class LocalDataSource @Inject constructor(private val mapper: TodoEntityMapper, 
     suspend fun save(todoItem: TodoEntity) = dataBase.todoDao().insert(todoItem)
 
     suspend fun changedStateDone(todoId: String, isDone: Boolean) =
-        dataBase.todoDao().changedStateDone(todoId, isDone)
+        dataBase.todoDao().changedStateDone(todoId, isDone, LocalDateTime.now().toMillis())
 
     suspend fun getTodo(todoId: String): TodoItem =
         mapper.fromEntityToTodoItem(dataBase.todoDao().loadById(todoId))
