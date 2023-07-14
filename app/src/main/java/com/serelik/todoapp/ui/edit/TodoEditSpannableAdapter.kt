@@ -1,4 +1,4 @@
-package com.serelik.todoapp.edit
+package com.serelik.todoapp.ui.edit
 
 import android.content.Context
 import android.text.SpannableString

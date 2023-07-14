@@ -1,43 +1,43 @@
-package com.serelik.todoapp.list
+package com.serelik.todoapp.ui.list
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.work.ExistingWorkPolicy
-import androidx.work.WorkManager
-import com.serelik.todoapp.TodoApp
 import com.serelik.todoapp.data.local.repository.TodoRepository
-import com.serelik.todoapp.data.workers.WorkRepository
 import com.serelik.todoapp.model.TodoItem
 import com.serelik.todoapp.model.TodoListScreenModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class TodoListViewModel : ViewModel() {
-    private val repository = TodoRepository
+class TodoListViewModel @Inject constructor(
+    private val repository: TodoRepository
+) : ViewModel() {
 
     private var isDoneVisible = false
 
     private var loadTodoJob: Job? = null
 
-    private val _liveData: MutableLiveData<TodoListScreenModel> = MutableLiveData()
-    val liveData: LiveData<TodoListScreenModel> = _liveData
+    private val _todoListScreenModel: MutableLiveData<TodoListScreenModel> = MutableLiveData()
+    val todoListScreenModel: LiveData<TodoListScreenModel> = _todoListScreenModel
 
-    val flowLoading = repository.loadingFlow
+    private val _loadingState: MutableLiveData<LoadingStatus> = MutableLiveData()
+    val loadingState: LiveData<LoadingStatus> = _loadingState
 
     init {
         loadListFromServer()
     }
 
     fun changedStateDone(item: TodoItem, isDone: Boolean) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.changedStateDone(item, isDone)
         }
     }
 
     fun remove(itemId: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.removeTodo(itemId)
         }
     }
@@ -52,26 +52,23 @@ class TodoListViewModel : ViewModel() {
             repository.loadAllUnDoneTodos()
         }
 
-        loadTodoJob = viewModelScope.launch {
+        loadTodoJob = viewModelScope.launch(Dispatchers.IO) {
             flow.collect {
-                _liveData.postValue(it)
+                _todoListScreenModel.postValue(it)
             }
         }
     }
 
     fun loadListFromServer() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
+                _loadingState.postValue(LoadingStatus.Loading)
                 repository.synchronizeList()
-            } catch (_: Throwable) {
-
+                _loadingState.postValue(LoadingStatus.Success)
+            } catch (e: Throwable) {
+                e.printStackTrace()
+                _loadingState.postValue(LoadingStatus.Error(e))
             }
         }
-        /*  WorkManager.getInstance(TodoApp.context)
-              .enqueueUniqueWork(
-                  "upload_from_server",
-                  ExistingWorkPolicy.KEEP,
-                  WorkRepository.loadListRequest()
-              )*/
     }
 }

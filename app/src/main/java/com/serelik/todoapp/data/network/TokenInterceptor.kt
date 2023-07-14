@@ -3,10 +3,9 @@ package com.serelik.todoapp.data.network
 import com.serelik.todoapp.data.local.TokenStorage
 import okhttp3.Interceptor
 import okhttp3.Response
+import javax.inject.Inject
 
-class TokenInterceptor : Interceptor {
-
-    private val tokenStorage = TokenStorage()
+class TokenInterceptor @Inject constructor(private val tokenStorage: TokenStorage) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val original = chain.request()

@@ -1,9 +1,10 @@
-package com.serelik.todoapp
+package com.serelik.todoapp.ui
 
 import android.content.Context
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ImageSpan
+import com.serelik.todoapp.R
 import com.serelik.todoapp.model.TodoItemImportance
 
 object ImportanceTextModifyHelper {
@@ -13,9 +14,11 @@ object ImportanceTextModifyHelper {
         context: Context
     ): SpannableString {
         val spannableText = SpannableString("  $text ")
-        val drawableRes = if (importance == TodoItemImportance.HIGH)
+        val drawableRes = if (importance == TodoItemImportance.HIGH) {
             R.drawable.ic_priority_high
-        else R.drawable.ic_priority_low
+        } else {
+            R.drawable.ic_priority_low
+        }
 
         spannableText.setSpan(
             ImageSpan(context, drawableRes),

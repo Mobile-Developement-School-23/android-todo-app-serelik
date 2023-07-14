@@ -6,12 +6,12 @@ import com.serelik.todoapp.extensions.toLocalDateTime
 import com.serelik.todoapp.extensions.toMillis
 import com.serelik.todoapp.model.TodoItem
 import java.util.UUID
+import javax.inject.Inject
 
-class TodoEntityMapper {
-    fun fromEntity(entity: TodoEntity): TodoItem {
-
+class TodoEntityMapper @Inject constructor() {
+    fun fromEntityToTodoItem(entity: TodoEntity): TodoItem {
         return TodoItem(
-            id = entity.id.toString(),
+            id = entity.id,
             created = entity.created.toLocalDateTime(),
             text = entity.text,
             importance = entity.importance,
@@ -22,9 +22,13 @@ class TodoEntityMapper {
         )
     }
 
-    fun fromDomain(todoItem: TodoItem): TodoEntity {
+    fun fromDomainTypeToEntityType(todoItem: TodoItem): TodoEntity {
         return TodoEntity(
-            id = if (todoItem.id == "") UUID.randomUUID() else UUID.fromString(todoItem.id),
+            id = if (todoItem.id == TodoItem.NEW_TODO_ID) {
+                UUID.randomUUID().toString()
+            } else {
+                todoItem.id
+            },
             created = todoItem.created.toMillis(),
             text = todoItem.text,
             importance = todoItem.importance,

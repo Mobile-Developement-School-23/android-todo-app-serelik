@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/back_secondary"
     android:orientation="vertical"
-    tools:context=".authorizationFragment.AuthorizationFragment">
+    tools:context=".ui.authorization.AuthorizationFragment">
 
     <TextView
         android:id="@+id/textView"

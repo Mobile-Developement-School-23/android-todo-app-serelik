@@ -4,13 +4,12 @@ import com.serelik.todoapp.data.local.entities.TodoEntity
 import com.serelik.todoapp.data.network.models.TodoItemImportanceResponse
 import com.serelik.todoapp.data.network.models.TodoItemResponse
 import com.serelik.todoapp.model.TodoItemImportance
-import java.util.UUID
+import javax.inject.Inject
 
-class NetworkMapper {
-    fun fromEntity(entity: TodoEntity): TodoItemResponse {
-
+class NetworkMapper @Inject constructor() {
+    fun fromEntityToResponseType(entity: TodoEntity): TodoItemResponse {
         return TodoItemResponse(
-            id = entity.id.toString(),
+            id = entity.id,
             created = entity.created,
             text = entity.text,
             importance = when (entity.importance) {
@@ -25,9 +24,9 @@ class NetworkMapper {
         )
     }
 
-    fun fromNetwork(todoItem: TodoItemResponse): TodoEntity {
+    fun fromResponseToEntityType(todoItem: TodoItemResponse): TodoEntity {
         return TodoEntity(
-            id = UUID.fromString(todoItem.id),
+            id = todoItem.id,
             created = todoItem.created,
             text = todoItem.text,
             importance = when (todoItem.importance) {

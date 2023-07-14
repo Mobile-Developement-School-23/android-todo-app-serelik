@@ -1,4 +1,4 @@
-package com.serelik.todoapp.authorizationFragment
+package com.serelik.todoapp.ui.authorization
 
 import android.app.Activity
 import android.os.Bundle
@@ -10,29 +10,37 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.WorkManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.serelik.todoapp.R
-import com.serelik.todoapp.TodoApp
 import com.serelik.todoapp.data.local.TokenStorage
+import com.serelik.todoapp.data.workers.SyncListTodoWorker
 import com.serelik.todoapp.data.workers.WorkRepository
 import com.serelik.todoapp.databinding.FragmentAuthorizationBinding
-import com.serelik.todoapp.list.TodoListFragment
+import com.serelik.todoapp.di.AuthorizationFragmentComponent
+import com.serelik.todoapp.ui.MainActivity
+import com.serelik.todoapp.ui.list.TodoListFragment
 import com.yandex.authsdk.YandexAuthLoginOptions
 import com.yandex.authsdk.YandexAuthOptions
 import com.yandex.authsdk.YandexAuthSdk
 import com.yandex.authsdk.internal.strategy.LoginType
+import javax.inject.Inject
 
+/**  Fragment for authorization*/
 class AuthorizationFragment : Fragment(R.layout.fragment_authorization) {
 
     private val binding by viewBinding(FragmentAuthorizationBinding::bind)
 
-    private val tokenStorage by lazy { TokenStorage() }
+    @Inject
+    lateinit var tokenStorage: TokenStorage
+
+    lateinit var component: AuthorizationFragmentComponent
 
     private val supportFragmentManager by lazy { requireActivity().supportFragmentManager }
 
     private val sdk: YandexAuthSdk by lazy {
         YandexAuthSdk(
-            requireContext(), YandexAuthOptions(
+            requireContext(),
+            YandexAuthOptions(
                 context = requireContext(),
-                loggingEnabled = true,
+                loggingEnabled = true
             )
         )
     }
@@ -48,12 +56,21 @@ class AuthorizationFragment : Fragment(R.layout.fragment_authorization) {
                         planUpdateList()
                         openListFragment()
                     }
-
                 } catch (e: Exception) {
                     Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT).show()
                 }
             }
         }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        component = (requireActivity() as MainActivity)
+            .activityComponent
+            .authorizationFragmentComponent().create()
+
+        component.inject(this)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -70,7 +87,6 @@ class AuthorizationFragment : Fragment(R.layout.fragment_authorization) {
             .commit()
     }
 
-
     private fun requestAuth() {
         val loginOptionsBuilder = YandexAuthLoginOptions
             .Builder()
@@ -81,12 +97,11 @@ class AuthorizationFragment : Fragment(R.layout.fragment_authorization) {
     }
 
     private fun planUpdateList() {
-        WorkManager.getInstance(TodoApp.context)
+        WorkManager.getInstance(requireContext())
             .enqueueUniquePeriodicWork(
-                "upload_from_server_periodical",
+                SyncListTodoWorker.PERIODICAL_TAG,
                 ExistingPeriodicWorkPolicy.UPDATE,
                 WorkRepository.loadListRequestPeriodical()
             )
     }
-
 }

@@ -1,4 +1,4 @@
-package com.serelik.todoapp.list
+package com.serelik.todoapp.ui.list
 
 sealed interface LoadingStatus {
     object Loading : LoadingStatus

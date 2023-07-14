@@ -4,15 +4,14 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.serelik.todoapp.model.TodoItemImportance
-import java.util.UUID
 
 @Entity(
     tableName = DbContract.Todo.TABLE_NAME
 )
 data class TodoEntity(
-    @PrimaryKey()
+    @PrimaryKey
     @ColumnInfo(name = DbContract.Todo.COLUMN_NAME_ID)
-    val id: UUID = UUID.fromString(DEFAULT_UUID),
+    val id: String,
 
     @ColumnInfo(name = DbContract.Todo.COLUMN_NAME_TEXT)
     val text: String,
@@ -30,10 +29,5 @@ data class TodoEntity(
     val created: Long,
 
     @ColumnInfo(name = DbContract.Todo.COLUMN_NAME_MODIFIED)
-    val modified: Long? = null,
-) {
-    companion object {
-        const val DEFAULT_UUID = "00000000-0000-0000-0000-000000000000"
-    }
-}
-
+    val modified: Long? = null
+)

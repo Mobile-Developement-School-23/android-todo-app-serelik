@@ -1,4 +1,4 @@
-package com.serelik.todoapp.edit
+package com.serelik.todoapp.ui.edit
 
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
@@ -9,24 +9,35 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.serelik.todoapp.DateFormatterHelper
-import com.serelik.todoapp.ImportanceTextModifyHelper
 import com.serelik.todoapp.R
 import com.serelik.todoapp.databinding.FragmentTodoEditBinding
+import com.serelik.todoapp.di.TodoEditFragmentComponent
 import com.serelik.todoapp.model.TodoItem
 import com.serelik.todoapp.model.TodoItemImportance
+import com.serelik.todoapp.ui.DateFormatterHelper
+import com.serelik.todoapp.ui.ImportanceTextModifyHelper
+import com.serelik.todoapp.ui.MainActivity
 import java.time.LocalDate
+import javax.inject.Inject
 
 class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
 
-    private val viewModel: TodoEditViewModel by viewModels()
+    private val viewModel: TodoEditViewModel by viewModels {
+        viewModelFactory
+    }
+
+    lateinit var component: TodoEditFragmentComponent
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private val binding by viewBinding(FragmentTodoEditBinding::bind)
 
     private val supportFragmentManager by lazy { requireActivity().supportFragmentManager }
 
-    private val itemId by lazy { arguments?.getString(EDIT_ID_KEY) ?: "" }
+    private val itemId by lazy { arguments?.getString(EDIT_ID_KEY) ?: TodoItem.NEW_TODO_ID }
 
     private var dateSetListener =
         OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
@@ -35,11 +46,16 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
             val deadline = LocalDate.of(year, monthOfYear, dayOfMonth)
             viewModel.newDeadline = deadline
             binding.textViewDeadlineDate.text = DateFormatterHelper.format(deadline)
-
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        component = (requireActivity() as MainActivity)
+            .activityComponent
+            .todoEditFragmentComponent().create()
+
+        component.inject(this)
 
         viewModel.loadTodoItem(itemId)
     }
@@ -53,9 +69,9 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
 
         binding.textViewDeadlineDate.setOnClickListener { showDatePicker() }
 
-        viewModel.todoItemLiveData.observe(viewLifecycleOwner, ::bindTodo)
+        viewModel.todoItem.observe(viewLifecycleOwner, ::bindTodo)
 
-        if (itemId != "-1") {
+        if (itemId != TodoItem.NEW_TODO_ID) {
             binding.textViewDelete.isEnabled = true
             binding.textViewDelete.setOnClickListener {
                 viewModel.remove()
@@ -68,7 +84,8 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
         val deadLine = viewModel.newDeadline ?: LocalDate.now()
 
         val dialog = DatePickerDialog(
-            requireContext(), dateSetListener,
+            requireContext(),
+            dateSetListener,
             deadLine.year,
             deadLine.monthValue,
             deadLine.dayOfMonth
@@ -78,7 +95,6 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
     }
 
     private fun bindTodo(todoItem: TodoItem) {
-
         binding.apply {
             editText.setText(todoItem.text)
             spinner.setSelection(todoItem.importance.ordinal)
@@ -87,7 +103,9 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
                 switchCompat.isChecked = true
                 textViewDeadlineDate.text = DateFormatterHelper.format(todoItem.deadline)
                 textViewDeadlineDate.isVisible = true
-            } else textViewDeadlineDate.isVisible = false
+            } else {
+                textViewDeadlineDate.isVisible = false
+            }
         }
     }
 
@@ -113,17 +131,17 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
         )
 
         spinnerAdapter.setDropDownViewResource(R.layout.item_spinner_dropped)
-
         binding.spinner.adapter = spinnerAdapter
     }
 
     private fun setupSwitch() {
         binding.switchCompat.setOnCheckedChangeListener { switchView, isChecked ->
-            if (!switchView.isPressed)
+            if (!switchView.isPressed) {
                 return@setOnCheckedChangeListener
-            if (isChecked)
+            }
+            if (isChecked) {
                 showDatePicker()
-            else {
+            } else {
                 binding.textViewDeadlineDate.text = null
                 viewModel.newDeadline = null
                 binding.textViewDeadlineDate.isVisible = false
@@ -140,7 +158,7 @@ class TodoEditFragment : Fragment(R.layout.fragment_todo_edit) {
             if (binding.editText.text.isNotBlank()) {
                 viewModel.save(
                     text = binding.editText.text.toString(),
-                    importance = TodoItemImportance.values()[binding.spinner.selectedItemPosition],
+                    importance = TodoItemImportance.values()[binding.spinner.selectedItemPosition]
                 )
                 supportFragmentManager.popBackStack()
             } else {
