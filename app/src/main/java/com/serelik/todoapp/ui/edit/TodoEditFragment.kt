@@ -6,12 +6,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import com.serelik.todoapp.R
 import com.serelik.todoapp.di.TodoEditFragmentComponent
 import com.serelik.todoapp.model.TodoItem
 import com.serelik.todoapp.ui.MainActivity
@@ -52,25 +54,27 @@ class TodoEditFragment : Fragment(/*R.layout.fragment_todo_edit*/) {
         component.inject(this)
 
         viewModel.loadTodoItem(itemId)
+
+        ImportanceBottomSheetFragment.setFragmentResult(this, viewModel::setNewImportance)
+
     }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         return ComposeView(requireContext()).apply {
             setContent {
                 val uiState by viewModel.screenState.collectAsState()
                 TodoEditScreen(
                     todoEditScreenState = uiState,
-                    onDeadlineChangeState = {
-                        if (it)
-                            showDatePicker()
-                        else
-                            viewModel.setNewDeadline(null)
-                    },
-                    onBackClick = ::navigateBack
+                    onDeadlineChangeState = ::switchState,
+                    onBackClick = ::navigateBack,
+                    onImportanceClick = ::showBottomSheet,
+                    onDeleteClick = ::remove,
+                    onChangeText = viewModel::updateTodoItem,
+                    onSaveButtonClick = ::save,
                 )
             }
         }
@@ -88,6 +92,10 @@ class TodoEditFragment : Fragment(/*R.layout.fragment_todo_edit*/) {
         )
         dialog.setOnCancelListener { viewModel.setNewDeadline(null) }
         dialog.show()
+    }
+
+    private fun showBottomSheet() {
+        ImportanceBottomSheetFragment().show(supportFragmentManager, "bottom sheet")
     }
 
     /*    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -190,8 +198,34 @@ class TodoEditFragment : Fragment(/*R.layout.fragment_todo_edit*/) {
             }
         }*/
 
-    fun navigateBack() {
+    private fun navigateBack() {
         supportFragmentManager.popBackStack()
+    }
+
+    private fun remove() {
+        viewModel.remove()
+        navigateBack()
+    }
+
+    private fun save() {
+        if (viewModel.screenState.value.text.isNotBlank()) {
+            viewModel.save()
+            navigateBack()
+        }
+        else
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.empty_todo_edit_error_message),
+                Toast.LENGTH_SHORT
+            ).show()
+
+    }
+
+    private fun switchState(isSwitch: Boolean) {
+        if (isSwitch)
+            showDatePicker()
+        else
+            viewModel.setNewDeadline(null)
     }
 
     companion object {

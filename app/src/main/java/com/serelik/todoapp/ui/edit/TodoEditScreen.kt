@@ -1,6 +1,7 @@
 package com.serelik.todoapp.ui.edit
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,10 +23,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -37,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.serelik.todoapp.R
+import com.serelik.todoapp.model.TodoItemImportance
 import com.serelik.todoapp.ui.DateFormatterHelper
 import com.serelik.todoapp.ui.edit.compose.IndependentColor
 import com.serelik.todoapp.ui.edit.compose.TodoAppComposeAppTheme
@@ -44,7 +42,7 @@ import com.serelik.todoapp.ui.edit.compose.TodoAppComposeAppTheme
 
 @Preview()
 @Composable
-fun previewAble() {
+fun PreviewAble() {
     TodoEditScreen()
 }
 
@@ -52,7 +50,12 @@ fun previewAble() {
 fun TodoEditScreen(
     todoEditScreenState: TodoEditScreenState = TodoEditScreenState(),
     onDeadlineChangeState: (Boolean) -> Unit = {},
-    onBackClick: () -> Unit = {}
+    onBackClick: () -> Unit = {},
+    onImportanceClick: () -> Unit = {},
+    onDeleteClick: () -> Unit = {},
+    onChangeText: (String) -> Unit = {},
+    onSaveButtonClick: () -> Unit = {}
+
 ) {
     TodoAppComposeAppTheme {
         Surface(
@@ -74,7 +77,7 @@ fun TodoEditScreen(
 
                     Spacer(modifier = Modifier.weight(1.0f))
 
-                    TextButton(onClick = {}) {
+                    TextButton(onClick = onSaveButtonClick) {
                         Text(
                             text = stringResource(R.string.save),
                             color = IndependentColor.blue,
@@ -83,12 +86,10 @@ fun TodoEditScreen(
                     }
                 }
 
-                var value by remember {
-                    mutableStateOf("")
-                }
+
 
                 TextField(
-                    value = value, onValueChange = { value = it },
+                    value = todoEditScreenState.text, onValueChange = onChangeText,
                     Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp, start = 16.dp, end = 16.dp)
@@ -112,21 +113,53 @@ fun TodoEditScreen(
                         ),
                 )
 
-                var valueImportance by remember {
-                    mutableStateOf("")
+                Text(
+                    text = stringResource(id = R.string.importance_title),
+                    modifier = Modifier.padding(start = 16.dp, top = 28.dp),
+                    color = MaterialTheme.colorScheme.primary
+                )
+
+                val importanceText = when (todoEditScreenState.importance) {
+                    TodoItemImportance.NONE -> stringResource(id = R.string.importance_none)
+                    TodoItemImportance.LOW -> stringResource(id = R.string.importance_low)
+                    TodoItemImportance.HIGH -> stringResource(id = R.string.importance_high)
                 }
 
-                TextButton(
-                    content = { Text("text = value") },
-                    onClick = { },
-                    contentPadding = PaddingValues(
-                        start = 0.dp,
-                        top = 0.dp,
-                        end = 0.dp,
-                    ), modifier = Modifier.padding(
-                        start = 16.dp, top = 28.dp, bottom = 16.dp
-                    )
-                )
+                Row(
+                    modifier = Modifier
+                        .padding(start = 16.dp)
+                        .clickable { onImportanceClick() },
+                ) {
+                    when (todoEditScreenState.importance) {
+                        TodoItemImportance.HIGH -> {
+                            Image(
+                                painter = painterResource(R.drawable.ic_priority_high),
+                                contentDescription = "importance_high"
+                            )
+                            Text(
+                                text = importanceText,
+                                color = IndependentColor.red
+                            )
+                        }
+
+                        TodoItemImportance.LOW -> {
+                            Image(
+                                painter = painterResource(R.drawable.ic_priority_low),
+                                contentDescription = "importance_low"
+                            )
+                            Text(
+                                text = importanceText,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.padding(start = 10.dp)
+                            )
+                        }
+
+                        TodoItemImportance.NONE -> Text(
+                            text = importanceText,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
 
                 Divider(
                     modifier = Modifier.padding(
@@ -177,7 +210,7 @@ fun TodoEditScreen(
                 Divider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
 
                 Button(
-                    onClick = {}, colors = ButtonDefaults.buttonColors(
+                    onClick = onDeleteClick, colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.onPrimary,
                         /*           colors = androidx.compose.material.ButtonColors (
                                containerColor = Color(R.color.back_primary),
