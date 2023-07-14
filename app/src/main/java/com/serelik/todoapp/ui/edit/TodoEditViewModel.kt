@@ -54,7 +54,7 @@ class TodoEditViewModel @Inject constructor(
             deadline = state.deadlineDate
         )
         viewModelScope.launch(Dispatchers.IO) {
-                repository.updateTodo(newItem)
+            repository.updateTodo(newItem)
         }
     }
 

@@ -64,7 +64,9 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
 
         component.inject(this)
 
-        viewModel.changeDoneVisibility()
+        if (savedInstanceState == null) {
+            viewModel.changeDoneVisibility()
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

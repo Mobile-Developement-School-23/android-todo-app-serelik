@@ -50,9 +50,7 @@ class ImportanceBottomSheetFragment : BottomSheetDialogFragment(R.layout.bottom_
             requireContext()
         )
 
-
         binding.importanceLow.text = modifiedText
-
     }
 
     private fun textModifyForImportanceHigh() {
@@ -63,8 +61,6 @@ class ImportanceBottomSheetFragment : BottomSheetDialogFragment(R.layout.bottom_
         )
 
         binding.importanceHigh.text = modifiedText
-
-
     }
 
     companion object {

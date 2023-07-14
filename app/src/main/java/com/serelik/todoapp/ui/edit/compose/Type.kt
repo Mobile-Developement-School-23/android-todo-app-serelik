@@ -1,6 +1,5 @@
 package com.serelik.todoapp.ui.edit.compose
 
-
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -13,7 +12,7 @@ object Type {
             fontFamily = FontFamily.Default,
             fontWeight = FontWeight.Medium,
             fontSize = 14.sp,
-            lineHeight = 24.sp,
-        ),
+            lineHeight = 24.sp
+        )
     )
 }

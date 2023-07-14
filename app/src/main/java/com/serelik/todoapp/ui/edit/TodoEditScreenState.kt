@@ -5,7 +5,7 @@ import java.time.LocalDate
 
 data class TodoEditScreenState(
     val isNew: Boolean = true,
-    val text: String ="",
+    val text: String = "",
     val deadlineDate: LocalDate? = null,
-    val importance: TodoItemImportance = TodoItemImportance.HIGH,
+    val importance: TodoItemImportance = TodoItemImportance.HIGH
 )

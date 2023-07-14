@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tool="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -18,7 +17,6 @@
         app:titleTextAppearance="@style/Title" />
 
     <TextView
-        android:id="@+id/TextViewThemeType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingVertical="14dp"
@@ -32,14 +30,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?selectableItemBackground"
+        android:paddingVertical="14dp"
         android:paddingStart="16dp"
-        android:textAppearance="@style/Body"
-        tool:text="Dark" />
+        android:text="@string/theme_system"
+        android:textAppearance="@style/Body" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
     <TextView
         android:id="@+id/textViewLogout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:background="?selectableItemBackground"
         android:drawableLeft="@drawable/ic_logout"
         android:drawablePadding="8dp"

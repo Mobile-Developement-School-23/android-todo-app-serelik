@@ -11,8 +11,7 @@ fun TodoAppComposeAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable() () -> Unit
 ) {
-
-    val DarkColorScheme = darkColorScheme(
+    val darkColorScheme = darkColorScheme(
         primary = ColorDark.labelPrimary,
         onBackground = ColorDark.backPrimary,
         secondary = ColorDark.labelSecondary,
@@ -24,7 +23,7 @@ fun TodoAppComposeAppTheme(
         surfaceTint = IndependentColor.white
     )
 
-    val LightColorScheme = lightColorScheme(
+    val lightColorScheme = lightColorScheme(
         primary = ColorLight.labelPrimary,
         background = IndependentColor.red,
         onBackground = IndependentColor.red,
@@ -39,8 +38,8 @@ fun TodoAppComposeAppTheme(
     )
 
     val colorScheme = when {
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+        darkTheme -> darkColorScheme
+        else -> lightColorScheme
     }
 
     MaterialTheme(
@@ -49,4 +48,3 @@ fun TodoAppComposeAppTheme(
         content = content
     )
 }
-

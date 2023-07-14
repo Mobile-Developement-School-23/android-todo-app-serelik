@@ -41,7 +41,6 @@ import com.serelik.todoapp.ui.edit.compose.IndependentColor
 import com.serelik.todoapp.ui.edit.compose.TodoAppComposeAppTheme
 import java.time.LocalDate
 
-
 @Preview
 @Composable
 fun TodoEditScreenPreviewAble() {
@@ -71,9 +70,7 @@ fun TodoEditScreen(
                 .fillMaxSize(),
             color = MaterialTheme.colorScheme.onPrimary
         ) {
-
             Column {
-
                 ToolBar(onBackClick = onBackClick, onSaveButtonClick = onSaveButtonClick)
                 EditTextSetup(text = todoEditScreenState.text, onChangeText = onChangeText)
 
@@ -105,29 +102,30 @@ fun TodoEditScreen(
 
 @Composable
 fun DeadlineBlock(deadlineDate: LocalDate?, onDeadlineChangeState: (Boolean) -> Unit) = Row {
-
     Column(modifier = Modifier.padding(16.dp)) {
         Text(
             text = stringResource(id = R.string.deadline_title),
             color = MaterialTheme.colorScheme.primary
         )
 
-        TextButton(onClick = {}, content = {
-            Text(
-                text = deadlineDate?.let {
-                    DateFormatterHelper.format(
-                        it
-                    )
-                }
-                    ?: "",
-                textAlign = TextAlign.Start
-            )
-        },
+        TextButton(
+            onClick = {},
+            content = {
+                Text(
+                    text = deadlineDate?.let {
+                        DateFormatterHelper.format(
+                            it
+                        )
+                    }
+                        ?: "",
+                    textAlign = TextAlign.Start
+                )
+            },
             contentPadding = PaddingValues(
                 start = 0.dp,
                 top = 0.dp,
                 end = 0.dp,
-                bottom = 0.dp,
+                bottom = 0.dp
             )
         )
     }
@@ -159,7 +157,7 @@ fun ImportanceBlock(importance: TodoItemImportance, onImportanceClick: () -> Uni
     Row(
         modifier = Modifier
             .padding(start = 16.dp)
-            .clickable { onImportanceClick() },
+            .clickable { onImportanceClick() }
     ) {
         when (importance) {
             TodoItemImportance.HIGH -> {
@@ -196,7 +194,8 @@ fun ImportanceBlock(importance: TodoItemImportance, onImportanceClick: () -> Uni
 @Composable
 fun EditTextSetup(text: String, onChangeText: (String) -> Unit) {
     TextField(
-        value = text, onValueChange = onChangeText,
+        value = text,
+        onValueChange = onChangeText,
         Modifier
             .fillMaxWidth()
             .padding(top = 8.dp, start = 16.dp, end = 16.dp)
@@ -216,8 +215,8 @@ fun EditTextSetup(text: String, onChangeText: (String) -> Unit) {
                 unfocusedContainerColor = MaterialTheme.colorScheme.onSecondary,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent,
-            ),
+                disabledIndicatorColor = Color.Transparent
+            )
     )
 }
 
@@ -250,17 +249,19 @@ fun ToolBar(
 @Composable
 fun DeleteButton(onDeleteClick: () -> Unit, isNew: Boolean) {
     Button(
-        onClick = onDeleteClick, colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.onPrimary,
+        onClick = onDeleteClick,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.onPrimary
         )
     ) {
         Image(
             painter = painterResource(id = R.drawable.ic_delete),
             contentDescription = "Image",
-            colorFilter = if (isNew)
+            colorFilter = if (isNew) {
                 ColorFilter.tint(IndependentColor.getDisabled(isSystemInDarkTheme()))
-            else
+            } else {
                 ColorFilter.tint(IndependentColor.red)
+            }
         )
 
         Spacer(modifier = Modifier.padding(start = 12.dp))
@@ -269,10 +270,11 @@ fun DeleteButton(onDeleteClick: () -> Unit, isNew: Boolean) {
             stringResource(id = R.string.Delete),
             textAlign = TextAlign.Center,
             fontSize = 20.sp,
-            color = if (isNew)
+            color = if (isNew) {
                 IndependentColor.getDisabled(isSystemInDarkTheme())
-            else
+            } else {
                 IndependentColor.red
+            }
         )
     }
 }

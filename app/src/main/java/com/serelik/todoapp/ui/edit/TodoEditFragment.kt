@@ -56,7 +56,6 @@ class TodoEditFragment : Fragment(/*R.layout.fragment_todo_edit*/) {
         viewModel.loadTodoItem(itemId)
 
         ImportanceBottomSheetFragment.setFragmentResult(this, viewModel::setNewImportance)
-
     }
 
     override fun onCreateView(
@@ -74,7 +73,7 @@ class TodoEditFragment : Fragment(/*R.layout.fragment_todo_edit*/) {
                     onImportanceClick = ::showBottomSheet,
                     onDeleteClick = ::remove,
                     onChangeText = viewModel::updateTodoItem,
-                    onSaveButtonClick = ::save,
+                    onSaveButtonClick = ::save
                 )
             }
         }
@@ -213,20 +212,21 @@ class TodoEditFragment : Fragment(/*R.layout.fragment_todo_edit*/) {
         if (viewModel.screenState.value.text.isNotBlank()) {
             viewModel.save()
             navigateBack()
-        } else
+        } else {
             Toast.makeText(
                 requireContext(),
                 getString(R.string.empty_todo_edit_error_message),
                 Toast.LENGTH_SHORT
             ).show()
-
+        }
     }
 
     private fun switchState(isSwitch: Boolean) {
-        if (isSwitch)
+        if (isSwitch) {
             showDatePicker()
-        else
+        } else {
             viewModel.setNewDeadline(null)
+        }
     }
 
     companion object {

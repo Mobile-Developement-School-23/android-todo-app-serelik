@@ -11,14 +11,18 @@ object IndependentColor {
     val black = Color(0xFF000000)
 
     fun getGrayLight(isDark: Boolean): Color {
-        return if (isDark)
+        return if (isDark) {
             ColorDark.grayLight
-        else ColorLight.grayLight
+        } else {
+            ColorLight.grayLight
+        }
     }
 
     fun getDisabled(isDark: Boolean): Color {
-        return if (isDark)
+        return if (isDark) {
             ColorDark.labelDisable
-        else ColorLight.labelDisable
+        } else {
+            ColorLight.labelDisable
+        }
     }
 }
