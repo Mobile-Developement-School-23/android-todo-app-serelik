@@ -29,7 +29,8 @@ class TodoEditViewModel @Inject constructor(
             screenState.value = TodoEditScreenState(
                 isNew = id == TodoItem.NEW_TODO_ID,
                 deadlineDate = todoItem.deadline,
-                importance = todoItem.importance
+                importance = todoItem.importance,
+                text = todoItem.text
             )
         }
     }

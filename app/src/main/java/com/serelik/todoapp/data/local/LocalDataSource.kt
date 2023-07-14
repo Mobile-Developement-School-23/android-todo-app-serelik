@@ -7,6 +7,7 @@ import com.serelik.todoapp.extensions.toMillis
 import com.serelik.todoapp.model.TodoItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -19,7 +20,7 @@ class LocalDataSource @Inject constructor(private val mapper: TodoEntityMapper, 
             list.map { mapper.fromEntityToTodoItem(entity = it) }
         }
 
-    fun getAllTodos(): List<TodoEntity> = dataBase.todoDao().loadAllTodos()
+    suspend fun getAllTodos(): List<TodoEntity> = dataBase.todoDao().loadAllTodos()
 
     fun getAllDeletedTodos(): List<TodoDeletedEntity> = dataBase.todoDeletedDao().loadAllTodos()
 
@@ -46,4 +47,10 @@ class LocalDataSource @Inject constructor(private val mapper: TodoEntityMapper, 
         mapper.fromEntityToTodoItem(dataBase.todoDao().loadById(todoId))
 
     suspend fun replaceAllTodo(todos: List<TodoEntity>) = dataBase.todoDao().replaceAll(todos)
+
+    suspend fun getAllTodosHaveTomorrowDeadline(): List<TodoItem> {
+        val tomorrowDeadline = LocalDate.now().plusDays(1)
+        return dataBase.todoDao().loadAllTodosHaveTomorrowDeadline(tomorrowDeadline.toMillis())
+            .map { mapper.fromEntityToTodoItem(it) }
+    }
 }

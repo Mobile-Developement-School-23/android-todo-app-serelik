@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
@@ -72,29 +74,35 @@ fun TodoEditScreen(
         ) {
             Column {
                 ToolBar(onBackClick = onBackClick, onSaveButtonClick = onSaveButtonClick)
-                EditTextSetup(text = todoEditScreenState.text, onChangeText = onChangeText)
+                Column(
+                    modifier = Modifier.verticalScroll(rememberScrollState())
+                ) {
 
-                ImportanceBlock(
-                    importance = todoEditScreenState.importance,
-                    onImportanceClick = onImportanceClick
-                )
 
-                Divider(
-                    modifier = Modifier.padding(
-                        start = 16.dp,
-                        end = 16.dp,
-                        top = 16.dp
+                    EditTextSetup(text = todoEditScreenState.text, onChangeText = onChangeText)
+
+                    ImportanceBlock(
+                        importance = todoEditScreenState.importance,
+                        onImportanceClick = onImportanceClick
                     )
-                )
 
-                DeadlineBlock(
-                    deadlineDate = todoEditScreenState.deadlineDate,
-                    onDeadlineChangeState = onDeadlineChangeState
-                )
+                    Divider(
+                        modifier = Modifier.padding(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = 16.dp
+                        )
+                    )
 
-                Divider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
+                    DeadlineBlock(
+                        deadlineDate = todoEditScreenState.deadlineDate,
+                        onDeadlineChangeState = onDeadlineChangeState
+                    )
 
-                DeleteButton(isNew = todoEditScreenState.isNew, onDeleteClick = onDeleteClick)
+                    Divider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
+
+                    DeleteButton(isNew = todoEditScreenState.isNew, onDeleteClick = onDeleteClick)
+                }
             }
         }
     }
