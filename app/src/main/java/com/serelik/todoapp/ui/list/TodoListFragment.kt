@@ -35,7 +35,7 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
         TodoItemAdapter(
             onTodoClickListener = ::openEditFragment,
             changeIsDoneListener = viewModel::changedStateDone,
-            onNewTodoClickListener = ::openAddFragment
+            onNewTodoClickListener = ::openEditFragment
         )
     }
 
@@ -61,6 +61,7 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
         component = (requireActivity() as MainActivity)
             .activityComponent
             .todoListFragmentComponent().create()
+
 
         component.inject(this)
 
@@ -89,7 +90,7 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
         }
 
         viewBinding.floatingActionButton.setOnClickListener {
-            openAddFragment()
+            openEditFragment()
         }
 
         viewBinding.swipeRefreshLayout.setOnRefreshListener {
@@ -114,8 +115,14 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
         getVisibilityTodoItemButton()?.setIcon(notificationIcon)
     }
 
-    private fun openEditFragment(id: String) {
+    private fun openEditFragment(id: String? = null) {
         supportFragmentManager.beginTransaction()
+            .setCustomAnimations(
+                android.R.anim.fade_in,
+                android.R.anim.fade_out,
+                android.R.anim.fade_in,
+                android.R.anim.fade_out,
+            )
             .replace(android.R.id.content, TodoEditFragment.createFragment(id))
             .addToBackStack(EDIT_ID_KEY)
             .commit()
@@ -125,13 +132,6 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
         val swipeHelperCallback = SwipeHelperCallback(requireContext(), onSwipeTodo)
         val swipeHelper = ItemTouchHelper(swipeHelperCallback)
         swipeHelper.attachToRecyclerView(viewBinding.recyclerView)
-    }
-
-    private fun openAddFragment() {
-        supportFragmentManager.beginTransaction()
-            .replace(android.R.id.content, TodoEditFragment())
-            .addToBackStack(TODO_ADD_FRAGMENT)
-            .commit()
     }
 
     private fun openSettingsFragment() {
@@ -177,7 +177,6 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
 
     companion object {
         const val EDIT_ID_KEY = "EDIT_ID_KEY"
-        const val TODO_ADD_FRAGMENT = "TODO_ADD_FRAGMENT"
         const val SETTINGS_FRAGMENT = "SETTINGS_FRAGMENT"
     }
 }

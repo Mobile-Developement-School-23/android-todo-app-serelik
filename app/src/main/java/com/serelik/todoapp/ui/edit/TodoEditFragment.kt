@@ -232,7 +232,7 @@ class TodoEditFragment : Fragment(/*R.layout.fragment_todo_edit*/) {
     companion object {
         private const val EDIT_ID_KEY = "Edit_id_Key"
 
-        fun createFragment(id: String): TodoEditFragment {
+        fun createFragment(id: String?): TodoEditFragment {
             val arg = Bundle()
             arg.putString(EDIT_ID_KEY, id)
             val fragment = TodoEditFragment()
