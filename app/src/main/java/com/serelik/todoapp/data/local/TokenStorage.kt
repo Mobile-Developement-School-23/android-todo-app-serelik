@@ -18,6 +18,13 @@ class TokenStorage @Inject constructor(context: Context) {
         }
     }
 
+    fun removeToken() {
+        with(sharedPref.edit()) {
+            remove(TOKEN_KEY)
+            apply()
+        }
+    }
+
     fun getToken(): String? {
         return sharedPref.getString(TOKEN_KEY, null)
     }

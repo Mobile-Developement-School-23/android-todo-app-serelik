@@ -203,16 +203,17 @@ class TodoEditFragment : Fragment(/*R.layout.fragment_todo_edit*/) {
     }
 
     private fun remove() {
-        viewModel.remove()
-        navigateBack()
+        if (!viewModel.screenState.value.isNew) {
+            viewModel.remove()
+            navigateBack()
+        }
     }
 
     private fun save() {
         if (viewModel.screenState.value.text.isNotBlank()) {
             viewModel.save()
             navigateBack()
-        }
-        else
+        } else
             Toast.makeText(
                 requireContext(),
                 getString(R.string.empty_todo_edit_error_message),

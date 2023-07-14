@@ -16,6 +16,7 @@ import com.serelik.todoapp.di.TodoListFragmentComponent
 import com.serelik.todoapp.model.TodoListScreenModel
 import com.serelik.todoapp.ui.MainActivity
 import com.serelik.todoapp.ui.edit.TodoEditFragment
+import com.serelik.todoapp.ui.settings.SettingsFragment
 import java.io.IOException
 import javax.inject.Inject
 
@@ -79,6 +80,12 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
             viewModel.changeDoneVisibility()
             true
         }
+
+        getSettingsTodoItemButton()?.setOnMenuItemClickListener {
+            openSettingsFragment()
+            true
+        }
+
         viewBinding.floatingActionButton.setOnClickListener {
             openAddFragment()
         }
@@ -90,6 +97,10 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
 
     private fun getVisibilityTodoItemButton(): MenuItem? {
         return viewBinding.toolbar.menu.findItem(R.id.action_hide)
+    }
+
+    private fun getSettingsTodoItemButton(): MenuItem? {
+        return viewBinding.toolbar.menu.findItem(R.id.action_settings)
     }
 
     private fun updateVisibilityTodoDoneItemsStatus(isDoneVisible: Boolean) {
@@ -118,6 +129,13 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
         supportFragmentManager.beginTransaction()
             .replace(android.R.id.content, TodoEditFragment())
             .addToBackStack(TODO_ADD_FRAGMENT)
+            .commit()
+    }
+
+    private fun openSettingsFragment() {
+        supportFragmentManager.beginTransaction()
+            .replace(android.R.id.content, SettingsFragment())
+            .addToBackStack(SETTINGS_FRAGMENT)
             .commit()
     }
 
@@ -156,7 +174,8 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
     }
 
     companion object {
-        const val EDIT_ID_KEY = "Edit_id_Key"
-        const val TODO_ADD_FRAGMENT = "todo_add_fragment"
+        const val EDIT_ID_KEY = "EDIT_ID_KEY"
+        const val TODO_ADD_FRAGMENT = "TODO_ADD_FRAGMENT"
+        const val SETTINGS_FRAGMENT = "SETTINGS_FRAGMENT"
     }
 }
