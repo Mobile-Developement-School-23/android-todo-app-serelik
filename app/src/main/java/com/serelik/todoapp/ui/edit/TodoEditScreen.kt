@@ -1,5 +1,6 @@
 package com.serelik.todoapp.ui.edit
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -42,6 +43,12 @@ import java.time.LocalDate
 
 
 @Preview
+@Composable
+fun TodoEditScreenPreviewAble() {
+    TodoEditScreen()
+}
+
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewAble() {
     TodoEditScreen()
