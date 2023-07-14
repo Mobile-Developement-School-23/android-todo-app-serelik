@@ -1,8 +1,12 @@
 package com.serelik.todoapp.ui
 
+import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
@@ -20,6 +24,11 @@ class MainActivity : AppCompatActivity() {
     private val tokenStorage by lazy { TokenStorage(this) }
     private val themeStorage by lazy { ThemeStorage(this) }
 
+    val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission(), {
+        })
+
+
     lateinit var activityComponent: ActivityComponent
         private set
 
@@ -29,20 +38,13 @@ class MainActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
 
+        checkNotificationPermission()
+
         createNotificationsChannels()
         ReminderManager.startReminder(this)
 
         if (savedInstanceState == null) {
-            val fragment = if (tokenStorage.hasToken()) {
-                TodoListFragment()
-            } else {
-                AuthorizationFragment()
-            }
-
-            supportFragmentManager
-                .beginTransaction()
-                .add(android.R.id.content, fragment)
-                .commit()
+            navigate()
         }
     }
 
@@ -65,4 +67,27 @@ class MainActivity : AppCompatActivity() {
         ContextCompat.getSystemService(this, NotificationManager::class.java)
             ?.createNotificationChannel(channel)
     }
+
+    fun navigate() {
+        val fragment = if (tokenStorage.hasToken()) {
+            TodoListFragment()
+        } else {
+            AuthorizationFragment()
+        }
+
+        supportFragmentManager
+            .beginTransaction()
+            .add(android.R.id.content, fragment)
+            .commit()
+    }
+
+    private fun checkNotificationPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+            != PackageManager.PERMISSION_GRANTED
+            && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+        ) {
+            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+
 }
