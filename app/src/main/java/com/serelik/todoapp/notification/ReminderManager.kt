@@ -4,20 +4,25 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.util.Log
+import com.serelik.todoapp.data.local.DeadlineNotificationStorage
 import java.util.Calendar
 import java.util.Locale
+import javax.inject.Inject
 
 
-object ReminderManager {
+class ReminderManager @Inject constructor(
+    private val context: Context,
+    private val deadlineNotificationStorage: DeadlineNotificationStorage
+) {
 
     fun startReminder(
-        context: Context,
-        reminderTime: String = "23:59",
         reminderId: Int = REMINDER_NOTIFICATION_REQUEST_CODE
     ) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        val intent = createIntentAlarmManager(context, reminderId)
+        val reminderTime = deadlineNotificationStorage.getDeadlineTimeNotification()
+        val intent = createIntentAlarmManager(reminderId)
         val calendar = getTimeAlarmManager(reminderTime)
 
         alarmManager.setAlarmClock(
@@ -27,22 +32,13 @@ object ReminderManager {
     }
 
     fun stopReminder(
-        context: Context,
         reminderId: Int = REMINDER_NOTIFICATION_REQUEST_CODE
     ) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, AlarmReceiver::class.java).let { intent ->
-            PendingIntent.getBroadcast(
-                context,
-                reminderId,
-                intent,
-                PendingIntent.FLAG_IMMUTABLE
-            )
-        }
-        alarmManager.cancel(intent)
+        alarmManager.cancel(createIntentAlarmManager(reminderId))
     }
 
-    private fun createIntentAlarmManager(context: Context, reminderId: Int): PendingIntent? {
+    private fun createIntentAlarmManager(reminderId: Int): PendingIntent? {
         return Intent(context.applicationContext, AlarmReceiver::class.java).let { intent ->
             PendingIntent.getBroadcast(
                 context.applicationContext,
@@ -53,12 +49,14 @@ object ReminderManager {
         }
     }
 
-    private fun getTimeAlarmManager(reminderTime: String): Calendar {
-        val (hours, min) = reminderTime.split(":").map { it.toInt() }
+    private fun getTimeAlarmManager(reminderTime: Int): Calendar {
+        val hours = reminderTime / 60
+        val minutes = reminderTime % 60
+        Log.d("tag", "$hours, $minutes")
         val calendar: Calendar = Calendar.getInstance(Locale.ENGLISH).apply {
             set(Calendar.HOUR_OF_DAY, hours)
-            set(Calendar.MINUTE, min)
-            set(Calendar.SECOND, 30)
+            set(Calendar.MINUTE, minutes)
+            set(Calendar.SECOND, 1)
         }
 
         if (Calendar.getInstance(Locale.ENGLISH)
@@ -70,6 +68,8 @@ object ReminderManager {
         return calendar
     }
 
-    private const val REMINDER_NOTIFICATION_REQUEST_CODE = 123
+    companion object {
+        private const val REMINDER_NOTIFICATION_REQUEST_CODE = 123
+    }
 
 }

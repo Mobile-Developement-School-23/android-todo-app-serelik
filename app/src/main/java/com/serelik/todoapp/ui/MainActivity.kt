@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import com.serelik.todoapp.component
+import com.serelik.todoapp.data.local.DeadlineNotificationStorage
 import com.serelik.todoapp.data.local.ThemeStorage
 import com.serelik.todoapp.data.local.TokenStorage
 import com.serelik.todoapp.di.ActivityComponent
@@ -19,14 +20,17 @@ import com.serelik.todoapp.notification.AlarmReceiver
 import com.serelik.todoapp.notification.ReminderManager
 import com.serelik.todoapp.ui.authorization.AuthorizationFragment
 import com.serelik.todoapp.ui.list.TodoListFragment
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
     private val tokenStorage by lazy { TokenStorage(this) }
     private val themeStorage by lazy { ThemeStorage(this) }
 
-    val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission(), {
-        })
+    @Inject
+    lateinit var reminderManager: ReminderManager
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission(), {})
 
 
     lateinit var activityComponent: ActivityComponent
@@ -34,14 +38,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         activityComponent = this.component.activityComponent().create()
+        activityComponent.inject(this)
         changeTheme(themeStorage.getTheme())
+
 
         super.onCreate(savedInstanceState)
 
         checkNotificationPermission()
 
         createNotificationsChannels()
-        ReminderManager.startReminder(this)
 
         if (savedInstanceState == null) {
             navigate()
@@ -61,14 +66,14 @@ class MainActivity : AppCompatActivity() {
     private fun createNotificationsChannels() {
         val channel = NotificationChannel(
             AlarmReceiver.REMINDERS_NOTIFICATION_CHANNEL_ID,
-            "checky check",
+            NOTIFICATION_DEADLINE,
             NotificationManager.IMPORTANCE_HIGH
         )
         ContextCompat.getSystemService(this, NotificationManager::class.java)
             ?.createNotificationChannel(channel)
     }
 
-    fun navigate() {
+    private fun navigate() {
         val fragment = if (tokenStorage.hasToken()) {
             TodoListFragment()
         } else {
@@ -88,6 +93,10 @@ class MainActivity : AppCompatActivity() {
         ) {
             requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
+    }
+
+    companion object {
+        const val NOTIFICATION_DEADLINE = "NOTIFICATION_DEADLINE"
     }
 
 }

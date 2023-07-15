@@ -35,6 +35,49 @@
         android:text="@string/theme_system"
         android:textAppearance="@style/Body" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:paddingVertical="14dp"
+        android:paddingStart="16dp"
+        android:text="Уведомлять о дедлайне в"
+        android:textAppearance="@style/Body"
+        android:textColor="@color/label_primary" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+        <TextView
+            android:id="@+id/textViewDeadlineNotification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?selectableItemBackground"
+            android:paddingVertical="14dp"
+            android:paddingStart="16dp"
+            android:text="00:00"
+            android:textAppearance="@style/Body"
+            android:textColor="@color/label_primary" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switchIsEnabledDeadline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            app:thumbTint="@color/selector_switch_thumb"
+            app:trackTint="@color/selector_switch_track" />
+
+    </LinearLayout>
+
+
     <Space
         android:layout_width="match_parent"
         android:layout_height="0dp"

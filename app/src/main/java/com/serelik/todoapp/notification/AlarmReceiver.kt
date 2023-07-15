@@ -25,6 +25,9 @@ class AlarmReceiver : BroadcastReceiver() {
     @Inject
     lateinit var repository: TodoRepository
 
+    @Inject
+    lateinit var reminderManager: ReminderManager
+
     private val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     override fun onReceive(context: Context, intent: Intent?) {
@@ -48,7 +51,7 @@ class AlarmReceiver : BroadcastReceiver() {
             }
         }
 
-        ReminderManager.startReminder(context)
+        reminderManager.startReminder()
     }
 
     private suspend fun showNotification(
