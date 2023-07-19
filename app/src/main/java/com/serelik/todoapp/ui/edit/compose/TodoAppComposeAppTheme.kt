@@ -20,7 +20,7 @@ fun TodoAppComposeAppTheme(
         onSecondary = ColorDark.backSecondary,
         onSurface = ColorDark.backElevated,
         onSurfaceVariant = IndependentColor.white,
-        surfaceTint = IndependentColor.white
+        surfaceTint = IndependentColor.white,
     )
 
     val lightColorScheme = lightColorScheme(
@@ -34,7 +34,7 @@ fun TodoAppComposeAppTheme(
         surface = IndependentColor.gray,
         onSurface = ColorLight.backElevated,
         onSurfaceVariant = IndependentColor.black,
-        surfaceTint = IndependentColor.black
+        surfaceTint = IndependentColor.black,
     )
 
     val colorScheme = when {

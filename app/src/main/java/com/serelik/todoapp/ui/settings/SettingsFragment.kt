@@ -16,10 +16,11 @@ import com.serelik.todoapp.databinding.FragmentSettingsBinding
 import com.serelik.todoapp.di.SettingsFragmentComponent
 import com.serelik.todoapp.extensions.getStringRes
 import com.serelik.todoapp.model.ThemeType
+import com.serelik.todoapp.notification.ReminderManager
 import com.serelik.todoapp.ui.MainActivity
 import javax.inject.Inject
 
-class SettingsFragment : Fragment(R.layout.fragment_settings) {
+class SettingsFragment() : Fragment(R.layout.fragment_settings) {
 
     private val binding by viewBinding(FragmentSettingsBinding::bind)
 
@@ -86,7 +87,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                 showTimePicker()
             } else {
                 binding.textViewDeadlineNotification.text = null
-                viewModel.save(-1)
+                viewModel.save(ReminderManager.DO_NOT_NOTIFY)
             }
         }
     }
@@ -100,7 +101,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     }
 
     private fun showBottomSheet() {
-        ThemeBottomSheetFragment().show(supportFragmentManager, "bottom sheet")
+        ThemeBottomSheetFragment().show(supportFragmentManager, BOTTOM_SHEET)
     }
 
     private fun logout() {
@@ -127,11 +128,11 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             minutes,
             true
         )
-        dialog.setOnCancelListener { viewModel.save(-1) }
+        dialog.setOnCancelListener { viewModel.save(ReminderManager.DO_NOT_NOTIFY) }
         dialog.show()
     }
 
-    fun setupTimeNotification() {
+    private fun setupTimeNotification() {
         if (viewModel.getNewDeadlineTimeNotification() != -1) {
             binding.switchIsEnabledDeadline.isChecked = true
             val time = viewModel.getNewDeadlineTimeNotification()
@@ -147,5 +148,9 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     private fun formatTime(hours: Int, minutes: Int) {
 
         binding.textViewDeadlineNotification.text = String.format("%02d:%02d", hours, minutes)
+    }
+
+    companion object {
+        const val BOTTOM_SHEET = "BOTTOM_SHEET"
     }
 }

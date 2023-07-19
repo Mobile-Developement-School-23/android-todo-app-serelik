@@ -18,6 +18,14 @@ object IndependentColor {
         }
     }
 
+    fun getSupportOverlay(isDark: Boolean): Color {
+        return if (isDark) {
+            ColorDark.supportOverlay
+        } else {
+            ColorLight.supportOverlay
+        }
+    }
+
     fun getDisabled(isDark: Boolean): Color {
         return if (isDark) {
             ColorDark.labelDisable

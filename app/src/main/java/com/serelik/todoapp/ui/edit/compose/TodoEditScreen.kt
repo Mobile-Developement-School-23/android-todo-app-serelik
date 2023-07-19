@@ -1,4 +1,4 @@
-package com.serelik.todoapp.ui.edit
+package com.serelik.todoapp.ui.edit.compose
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
@@ -22,6 +22,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -39,8 +40,7 @@ import androidx.compose.ui.unit.sp
 import com.serelik.todoapp.R
 import com.serelik.todoapp.model.TodoItemImportance
 import com.serelik.todoapp.ui.DateFormatterHelper
-import com.serelik.todoapp.ui.edit.compose.IndependentColor
-import com.serelik.todoapp.ui.edit.compose.TodoAppComposeAppTheme
+import com.serelik.todoapp.ui.edit.TodoEditScreenState
 import java.time.LocalDate
 
 @Preview
@@ -143,7 +143,15 @@ fun DeadlineBlock(deadlineDate: LocalDate?, onDeadlineChangeState: (Boolean) -> 
     Switch(
         checked = deadlineDate != null,
         onCheckedChange = onDeadlineChangeState,
-        modifier = Modifier.padding(16.dp)
+        modifier = Modifier.padding(16.dp),
+        colors = SwitchDefaults.colors(
+            checkedThumbColor = IndependentColor.blue,
+            checkedTrackColor = IndependentColor.blue.copy(alpha = 0.3F),
+            uncheckedThumbColor = MaterialTheme.colorScheme.onSurface,
+            uncheckedTrackColor = IndependentColor.getSupportOverlay(isSystemInDarkTheme()),
+            checkedBorderColor = Color.Transparent,
+            uncheckedBorderColor = Color.Transparent
+        )
 
     )
 }

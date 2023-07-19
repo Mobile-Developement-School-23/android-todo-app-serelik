@@ -22,6 +22,8 @@ class ReminderManager @Inject constructor(
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val reminderTime = deadlineNotificationStorage.getDeadlineTimeNotification()
+        if (reminderTime == DO_NOT_NOTIFY)
+            return
         val intent = createIntentAlarmManager(reminderId)
         val calendar = getTimeAlarmManager(reminderTime)
 
@@ -70,6 +72,7 @@ class ReminderManager @Inject constructor(
 
     companion object {
         private const val REMINDER_NOTIFICATION_REQUEST_CODE = 123
+        const val DO_NOT_NOTIFY = -1
     }
 
 }
