@@ -1,9 +1,12 @@
 package com.serelik.todoapp.data.local
 
 import android.content.Context
+import com.serelik.todoapp.di.AppScope
 import com.serelik.todoapp.model.ThemeType
+import javax.inject.Inject
 
-class ThemeStorage(context: Context) {
+@AppScope
+class ThemeStorage @Inject constructor(context: Context) {
 
     private val sharedPref = context.getSharedPreferences(
         FILE_NAME,

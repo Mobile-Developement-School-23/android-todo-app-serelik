@@ -1,8 +1,10 @@
 package com.serelik.todoapp.data.local
 
 import android.content.Context
+import com.serelik.todoapp.di.AppScope
 import javax.inject.Inject
 
+@AppScope
 class TokenStorage @Inject constructor(context: Context) {
 
     private val sharedPref = context.getSharedPreferences(

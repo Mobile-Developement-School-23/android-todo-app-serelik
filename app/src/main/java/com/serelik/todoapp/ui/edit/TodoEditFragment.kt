@@ -32,8 +32,6 @@ class TodoEditFragment : Fragment(/*R.layout.fragment_todo_edit*/) {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    /*    private val binding by viewBinding(FragmentTodoEditBinding::bind)*/
-
     private val supportFragmentManager by lazy { requireActivity().supportFragmentManager }
 
     private val itemId by lazy { arguments?.getString(EDIT_ID_KEY) ?: TodoItem.NEW_TODO_ID }
@@ -97,106 +95,6 @@ class TodoEditFragment : Fragment(/*R.layout.fragment_todo_edit*/) {
     private fun showBottomSheet() {
         ImportanceBottomSheetFragment().show(supportFragmentManager, "bottom sheet")
     }
-
-    /*    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-            super.onViewCreated(view, savedInstanceState)
-
-            setupSpinner()
-            setupSwitch()
-            setupToolbar()
-
-            binding.textViewDeadlineDate.setOnClickListener { showDatePicker() }
-
-            viewModel.todoItem.observe(viewLifecycleOwner, ::bindTodo)
-
-            if (itemId != TodoItem.NEW_TODO_ID) {
-                binding.textViewDelete.isEnabled = true
-                binding.textViewDelete.setOnClickListener {
-                    viewModel.remove()
-                    supportFragmentManager.popBackStack()
-                }
-            }
-        }
-
-
-
-        private fun bindTodo(todoItem: TodoItem) {
-            binding.apply {
-                editText.setText(todoItem.text)
-                spinner.setSelection(todoItem.importance.ordinal)
-
-                if (todoItem.deadline != null) {
-                    switchCompat.isChecked = true
-                    textViewDeadlineDate.text = DateFormatterHelper.format(todoItem.deadline)
-                    textViewDeadlineDate.isVisible = true
-                } else {
-                    textViewDeadlineDate.isVisible = false
-                }
-            }
-        }
-
-        private fun setupSpinner() {
-            val priorityList = arrayOf(
-                SpannableString(getString(R.string.importance_none)),
-                ImportanceTextModifyHelper.modifyText(
-                    getString(R.string.importance_low),
-                    TodoItemImportance.LOW,
-                    requireContext()
-                ),
-                ImportanceTextModifyHelper.modifyText(
-                    getString(R.string.importance_high),
-                    TodoItemImportance.HIGH,
-                    requireContext()
-                )
-            )
-
-            val spinnerAdapter = TodoEditSpannableAdapter(
-                requireContext(),
-                R.layout.item_spinner,
-                priorityList
-            )
-
-            spinnerAdapter.setDropDownViewResource(R.layout.item_spinner_dropped)
-            binding.spinner.adapter = spinnerAdapter
-        }
-
-        private fun setupSwitch() {
-            binding.switchCompat.setOnCheckedChangeListener { switchView, isChecked ->
-                if (!switchView.isPressed) {
-                    return@setOnCheckedChangeListener
-                }
-                if (isChecked) {
-                    showDatePicker()
-                } else {
-                    binding.textViewDeadlineDate.text = null
-                    viewModel.newDeadline = null
-                    binding.textViewDeadlineDate.isVisible = false
-                }
-            }
-        }
-
-        private fun setupToolbar() {
-            binding.toolbar.setNavigationOnClickListener {
-                supportFragmentManager.popBackStack()
-            }
-
-            binding.toolbar.menu.findItem(R.id.action_save).setOnMenuItemClickListener {
-                if (binding.editText.text.isNotBlank()) {
-                    viewModel.save(
-                        text = binding.editText.text.toString(),
-                        importance = TodoItemImportance.values()[binding.spinner.selectedItemPosition]
-                    )
-                    supportFragmentManager.popBackStack()
-                } else {
-                    Toast.makeText(
-                        requireContext(),
-                        getString(R.string.empty_todo_edit_error_message),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-                true
-            }
-        }*/
 
     private fun navigateBack() {
         supportFragmentManager.popBackStack()

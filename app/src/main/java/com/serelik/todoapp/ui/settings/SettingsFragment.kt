@@ -20,7 +20,7 @@ import com.serelik.todoapp.notification.ReminderManager
 import com.serelik.todoapp.ui.MainActivity
 import javax.inject.Inject
 
-class SettingsFragment() : Fragment(R.layout.fragment_settings) {
+class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
     private val binding by viewBinding(FragmentSettingsBinding::bind)
 
@@ -29,8 +29,11 @@ class SettingsFragment() : Fragment(R.layout.fragment_settings) {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private val tokenStorage by lazy { TokenStorage(requireContext()) }
-    private val themeStorage by lazy { ThemeStorage(requireContext()) }
+    @Inject
+    lateinit var tokenStorage: TokenStorage
+
+    @Inject
+    lateinit var themeStorage: ThemeStorage
 
     private lateinit var component: SettingsFragmentComponent
 
