@@ -1,6 +1,7 @@
 package com.serelik.todoapp.di
 
 import androidx.lifecycle.ViewModelProvider
+import com.serelik.todoapp.ui.MainActivity
 import dagger.Binds
 import dagger.Module
 import dagger.Subcomponent
@@ -15,6 +16,9 @@ interface ActivityComponent {
     fun todoListFragmentComponent(): TodoListFragmentComponent.Factory
     fun todoEditFragmentComponent(): TodoEditFragmentComponent.Factory
     fun authorizationFragmentComponent(): AuthorizationFragmentComponent.Factory
+    fun settingsFragmentComponent(): SettingsFragmentComponent.Factory
+
+    fun inject(mainActivity: MainActivity)
 
     @Subcomponent.Factory
     interface Factory {
@@ -27,7 +31,8 @@ interface ActivityComponent {
     subcomponents = [
         TodoListFragmentComponent::class,
         TodoEditFragmentComponent::class,
-        AuthorizationFragmentComponent::class
+        AuthorizationFragmentComponent::class,
+        SettingsFragmentComponent::class
     ]
 )
 interface ActivityModule {

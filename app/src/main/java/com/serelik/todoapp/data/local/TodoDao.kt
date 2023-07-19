@@ -14,7 +14,10 @@ interface TodoDao {
     fun loadAllTodosFlow(): Flow<List<TodoEntity>>
 
     @Query("SELECT * FROM todo")
-    fun loadAllTodos(): List<TodoEntity>
+    suspend fun loadAllTodos(): List<TodoEntity>
+
+    @Query("SELECT * FROM todo WHERE todo.deadline = :tomorrow ")
+    suspend fun loadAllTodosHaveTomorrowDeadline(tomorrow: Long): List<TodoEntity>
 
     @Query("SELECT * FROM todo WHERE is_done = 0 ORDER BY created DESC ")
     fun loadAllUnDoneTodos(): Flow<List<TodoEntity>>

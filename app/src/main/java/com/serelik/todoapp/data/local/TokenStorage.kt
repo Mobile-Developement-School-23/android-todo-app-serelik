@@ -1,9 +1,10 @@
 package com.serelik.todoapp.data.local
 
 import android.content.Context
+import com.serelik.todoapp.di.AppScope
 import javax.inject.Inject
 
-/**         ↓ Storage for token  */
+@AppScope
 class TokenStorage @Inject constructor(context: Context) {
 
     private val sharedPref = context.getSharedPreferences(
@@ -14,6 +15,13 @@ class TokenStorage @Inject constructor(context: Context) {
     fun saveToken(token: String) {
         with(sharedPref.edit()) {
             putString(TOKEN_KEY, token)
+            apply()
+        }
+    }
+
+    fun removeToken() {
+        with(sharedPref.edit()) {
+            remove(TOKEN_KEY)
             apply()
         }
     }

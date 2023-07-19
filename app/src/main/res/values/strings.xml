@@ -16,5 +16,14 @@
     <string name="authorization_description">Войти с Яндекс ID</string>
     <string name="no_internet_message">Нет интернета</string>
     <string name="something_gone_wrong_message">Что-то пошло не так</string>
+    <string name="settings">Настройки</string>
+    <string name="title_theme">Тема</string>
+    <string name="logout">Выйти из аккаунта</string>
+    <string name="theme_system">Как в системе</string>
+    <string name="theme_dark">Всегда тёмная</string>
+    <string name="theme_light">Всегда светлая</string>
+    <string name="deadline_soon">скоро дедлайн</string>
+    <string name="deadline_soon_low">скоро дедлайн не слишком важной задачи</string>
+    <string name="deadline_soon_high">скоро дедлайн важной задачи</string>
 
 </resources>

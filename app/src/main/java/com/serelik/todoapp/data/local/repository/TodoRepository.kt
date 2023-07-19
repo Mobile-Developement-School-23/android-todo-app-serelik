@@ -82,7 +82,8 @@ class TodoRepository @Inject constructor(
     suspend fun synchronizeList() = withContext(Dispatchers.IO) {
         val response = todoApiService.getListTodos()
         val revision = response.revision
-        val todoFromNetworkList = response.todos.map { NetworkMapper().fromResponseToEntityType(it) }
+        val todoFromNetworkList =
+            response.todos.map { NetworkMapper().fromResponseToEntityType(it) }
         val deletedMap = localDataSource.getAllDeletedTodos().associateBy { it.id }
         val mergedListWithDeleted = todoFromNetworkList.filter { check(it, deletedMap) }
         val currentDataBase = localDataSource.getAllTodos().associateBy { it.id }.toMutableMap()
@@ -97,9 +98,14 @@ class TodoRepository @Inject constructor(
             return@withContext
         }
 
-        val networkResultList = TodoItemListBody(resultList.map { networkMapper.fromEntityToResponseType(it) })
+        val networkResultList =
+            TodoItemListBody(resultList.map { networkMapper.fromEntityToResponseType(it) })
         val newResponse = todoApiService.sendToServer(revision, networkResultList)
-        localDataSource.replaceAllTodo(newResponse.todos.map { networkMapper.fromResponseToEntityType(it) })
+        localDataSource.replaceAllTodo(newResponse.todos.map {
+            networkMapper.fromResponseToEntityType(
+                it
+            )
+        })
     }
 
     private fun planSync() {
@@ -109,6 +115,10 @@ class TodoRepository @Inject constructor(
                 ExistingWorkPolicy.REPLACE,
                 WorkRepository.syncTodoRequest()
             )
+    }
+
+    suspend fun loadAllTodosHaveTomorrowDeadline() = withContext(Dispatchers.IO) {
+        localDataSource.getAllTodosHaveTomorrowDeadline()
     }
 
     private fun check(entity: TodoEntity, deleteMap: Map<String, TodoDeletedEntity>): Boolean {

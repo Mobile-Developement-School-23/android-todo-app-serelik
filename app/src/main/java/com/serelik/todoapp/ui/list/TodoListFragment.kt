@@ -16,6 +16,7 @@ import com.serelik.todoapp.di.TodoListFragmentComponent
 import com.serelik.todoapp.model.TodoListScreenModel
 import com.serelik.todoapp.ui.MainActivity
 import com.serelik.todoapp.ui.edit.TodoEditFragment
+import com.serelik.todoapp.ui.settings.SettingsFragment
 import java.io.IOException
 import javax.inject.Inject
 
@@ -34,7 +35,7 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
         TodoItemAdapter(
             onTodoClickListener = ::openEditFragment,
             changeIsDoneListener = viewModel::changedStateDone,
-            onNewTodoClickListener = ::openAddFragment
+            onNewTodoClickListener = ::openEditFragment
         )
     }
 
@@ -61,9 +62,12 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
             .activityComponent
             .todoListFragmentComponent().create()
 
+
         component.inject(this)
 
-        viewModel.changeDoneVisibility()
+        if (savedInstanceState == null) {
+            viewModel.changeDoneVisibility()
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -79,8 +83,14 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
             viewModel.changeDoneVisibility()
             true
         }
+
+        getSettingsTodoItemButton()?.setOnMenuItemClickListener {
+            openSettingsFragment()
+            true
+        }
+
         viewBinding.floatingActionButton.setOnClickListener {
-            openAddFragment()
+            openEditFragment()
         }
 
         viewBinding.swipeRefreshLayout.setOnRefreshListener {
@@ -92,6 +102,10 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
         return viewBinding.toolbar.menu.findItem(R.id.action_hide)
     }
 
+    private fun getSettingsTodoItemButton(): MenuItem? {
+        return viewBinding.toolbar.menu.findItem(R.id.action_settings)
+    }
+
     private fun updateVisibilityTodoDoneItemsStatus(isDoneVisible: Boolean) {
         val notificationIcon = if (isDoneVisible) {
             R.drawable.ic_visibility_off
@@ -101,8 +115,14 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
         getVisibilityTodoItemButton()?.setIcon(notificationIcon)
     }
 
-    private fun openEditFragment(id: String) {
+    private fun openEditFragment(id: String? = null) {
         supportFragmentManager.beginTransaction()
+            .setCustomAnimations(
+                android.R.anim.fade_in,
+                android.R.anim.fade_out,
+                android.R.anim.fade_in,
+                android.R.anim.fade_out,
+            )
             .replace(android.R.id.content, TodoEditFragment.createFragment(id))
             .addToBackStack(EDIT_ID_KEY)
             .commit()
@@ -114,10 +134,10 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
         swipeHelper.attachToRecyclerView(viewBinding.recyclerView)
     }
 
-    private fun openAddFragment() {
+    private fun openSettingsFragment() {
         supportFragmentManager.beginTransaction()
-            .replace(android.R.id.content, TodoEditFragment())
-            .addToBackStack(TODO_ADD_FRAGMENT)
+            .replace(android.R.id.content, SettingsFragment())
+            .addToBackStack(SETTINGS_FRAGMENT)
             .commit()
     }
 
@@ -156,7 +176,7 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
     }
 
     companion object {
-        const val EDIT_ID_KEY = "Edit_id_Key"
-        const val TODO_ADD_FRAGMENT = "todo_add_fragment"
+        const val EDIT_ID_KEY = "EDIT_ID_KEY"
+        const val SETTINGS_FRAGMENT = "SETTINGS_FRAGMENT"
     }
 }

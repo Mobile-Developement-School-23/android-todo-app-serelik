@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.work.Configuration
 import com.serelik.todoapp.TodoApp
 import com.serelik.todoapp.data.workers.SyncListTodoWorkerFactory
+import com.serelik.todoapp.notification.AlarmReceiver
 import dagger.BindsInstance
 import dagger.Component
 import dagger.Module
@@ -19,6 +20,7 @@ interface AppComponent {
     fun activityComponent(): ActivityComponent.Factory
 
     fun inject(app: TodoApp)
+    fun inject(app: AlarmReceiver)
 
     @Component.Factory
     interface Factory {
